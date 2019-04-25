@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在2015年发布的 ECMAScript（ES6）新增内容很多，花费了将近 6 年（2009-11 至 2015-6）的时间才将其标准化。因此，从 ECMAScript 2016（ES7）开始，版本发布变得更加频繁，每年发布一个新版本，新增内容也会更小，基本只需要花费半个小时就能搞懂了。本文将大致介绍ES7，ES8和ES9的新特性，希望对大家日后采用新版本时有所借鉴。 ES7ECMAScript">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES7 &amp; ES8">
+<meta property="og:url" content="https://yang2012.github.io/2017/12/10/es/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="在2015年发布的 ECMAScript（ES6）新增内容很多，花费了将近 6 年（2009-11 至 2015-6）的时间才将其标准化。因此，从 ECMAScript 2016（ES7）开始，版本发布变得更加频繁，每年发布一个新版本，新增内容也会更小，基本只需要花费半个小时就能搞懂了。本文将大致介绍ES7，ES8和ES9的新特性，希望对大家日后采用新版本时有所借鉴。 ES7ECMAScript">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-24T03:08:14.333Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ES7 &amp; ES8">
+<meta name="twitter:description" content="在2015年发布的 ECMAScript（ES6）新增内容很多，花费了将近 6 年（2009-11 至 2015-6）的时间才将其标准化。因此，从 ECMAScript 2016（ES7）开始，版本发布变得更加频繁，每年发布一个新版本，新增内容也会更小，基本只需要花费半个小时就能搞懂了。本文将大致介绍ES7，ES8和ES9的新特性，希望对大家日后采用新版本时有所借鉴。 ES7ECMAScript">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2017/12/10/es/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>ES7 & ES8 | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2017/12/10/es/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ES7 & ES8
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2017-12-10 10:35:12" itemprop="dateCreated datePublished" datetime="2017-12-10T10:35:12+08:00">2017-12-10</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在2015年发布的 ECMAScript（ES6）新增内容很多，花费了将近 6 年（2009-11 至 2015-6）的时间才将其标准化。因此，从 ECMAScript 2016（ES7）开始，版本发布变得更加频繁，每年发布一个新版本，新增内容也会更小，基本只需要花费半个小时就能搞懂了。本文将大致介绍ES7，ES8和ES9的新特性，希望对大家日后采用新版本时有所借鉴。</p>
+<h2 id="ES7"><a href="#ES7" class="headerlink" title="ES7"></a>ES7</h2><p>ECMAScript 2017特性一览：</p>
+<ul>
+<li>Array.prototype.includes()方法</li>
+<li>求幂运算符</li>
+</ul>
+<a id="more"></a>
+<h3 id="Array-prototype-includes"><a href="#Array-prototype-includes" class="headerlink" title="Array.prototype.includes"></a>Array.prototype.includes</h3><p>Array.prototype.includes（value：任意值）： boolean</p>
+<p>如果传入的值在当前数组（this）中则返回 true，否则返回 false：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>].includes(<span class="string">'a'</span>)</span><br><span class="line"><span class="literal">true</span></span><br><span class="line">&gt; [<span class="string">'a'</span>, <span class="string">'b'</span>, <span class="string">'c'</span>].includes(<span class="string">'d'</span>)</span><br><span class="line"><span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>includes 方法与 indexOf 方法很相似——下面两个表达式是等价的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">arr.includes(x)</span><br><span class="line">arr.indexOf(x) &gt;= <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>唯一的区别是 includes() 方法能找到 NaN，而 indexOf() 不行：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; [<span class="literal">NaN</span>].includes(<span class="literal">NaN</span>)</span><br><span class="line"><span class="literal">true</span></span><br><span class="line">&gt; [<span class="literal">NaN</span>].indexOf(<span class="literal">NaN</span>)</span><br><span class="line"><span class="number">-1</span></span><br></pre></td></tr></table></figure>
+<p>includes 不会区分 +0 和 -0 （这也与其他 JavaScript 特性表现一致）：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; [<span class="number">-0</span>].includes(+<span class="number">0</span>)</span><br><span class="line"><span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>类型数组也有 includes() 方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> tarr = <span class="built_in">Uint8Array</span>.of(<span class="number">12</span>, <span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line"><span class="built_in">console</span>.log(tarr.includes(<span class="number">5</span>)); <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+<p>2.指数运算符<br>新提出来的特性是将 <strong> 作为指数操作的中缀运算符：`x </strong> y`</p>
+<p>与以下表达式运算结果相同：<code>Math.pow(x, y)</code></p>
+<p>示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> squared = <span class="number">3</span> ** <span class="number">2</span>; <span class="comment">// 9</span></span><br><span class="line"><span class="keyword">let</span> num = <span class="number">3</span>;</span><br><span class="line">num **= <span class="number">2</span>;</span><br><span class="line"><span class="built_in">console</span>.log(num); <span class="comment">// 9</span></span><br></pre></td></tr></table></figure>
+<h2 id="ES8"><a href="#ES8" class="headerlink" title="ES8"></a>ES8</h2><p>ECMAScript 2017特性一览<br>主要新功能：</p>
+<ul>
+<li>异步函数 Async Functions</li>
+<li>共享内存和Atomics</li>
+</ul>
+<p>次要新功能：</p>
+<ul>
+<li>String padding</li>
+<li>Object.values / Object.entries</li>
+<li>Object.getOwnPropertyDescriptors</li>
+<li>函数参数列表和调用中的尾逗号</li>
+</ul>
+<h3 id="String-padding"><a href="#String-padding" class="headerlink" title="String padding"></a>String padding</h3><p>在 String 对象中，ES8 增加了两个新的函数： padStart 和 padEnd 。正如其名，这两个函数的作用就是在字符串的头部和尾部增加新的字符串，并且返回一个具有指定长度的新的字符串。你可以使用指定的字符、字符串或者使用函数提供的默认值－空格来填充源字符串。具体的函数申明如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str.padStart(targetLength [, padString])</span><br><span class="line">str.padEnd(targetLength [, padString])</span><br></pre></td></tr></table></figure>
+<p>这俩函数的第一个参数是 targetLength ，这个参数指的是设定这两个函数最后返回的字符串的长度，如果这个参数小于或等于原来字符串的长度时，返回原来的字符串。第二个参数 padString 是可选参数，代表你想要填充的内容，默认值是空格。</p>
+<p>具体代码示例如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'es8'</span>.padStart(<span class="number">2</span>); <span class="comment">// 'es8'</span></span><br><span class="line"><span class="string">'es8'</span>.padStart(<span class="number">5</span>); <span class="comment">// ' es8'</span></span><br><span class="line"><span class="string">'es8'</span>.padStart(<span class="number">6</span>, <span class="string">'woof'</span>); <span class="comment">// 'wooes8'</span></span><br><span class="line"><span class="string">'es8'</span>.padStart(<span class="number">14</span>, <span class="string">'wow'</span>); <span class="comment">// 'wowwowwowwoes8'</span></span><br><span class="line"><span class="string">'es8'</span>.padStart(<span class="number">7</span>, <span class="string">'0'</span>); <span class="comment">// '0000es8'</span></span><br><span class="line"><span class="string">'es8'</span>.padEnd(<span class="number">2</span>); <span class="comment">// 'es8'</span></span><br><span class="line"><span class="string">'es8'</span>.padEnd(<span class="number">5</span>); <span class="comment">// 'es8 '</span></span><br><span class="line"><span class="string">'es8'</span>.padEnd(<span class="number">6</span>, <span class="string">'woof'</span>); <span class="comment">// 'es8woo'</span></span><br><span class="line"><span class="string">'es8'</span>.padEnd(<span class="number">14</span>, <span class="string">'wow'</span>); <span class="comment">// 'es8wowwowwowwo'</span></span><br><span class="line"><span class="string">'es8'</span>.padEnd(<span class="number">7</span>, <span class="string">'6'</span>); <span class="comment">// 'es86666'</span></span><br></pre></td></tr></table></figure>
+<h3 id="Object-values-amp-Object-entries"><a href="#Object-values-amp-Object-entries" class="headerlink" title="Object.values &amp; Object.entries"></a>Object.values &amp; Object.entries</h3><p>在 Object 中，新增了两个新的函数，Object.values 函数和 Object.entries 函数。Object.values 函数将会返回一个数组，该数组的内容是函数参数（一个对象）可遍历属性的属性值。数组中得到的属性值的顺序与你在对参数对象使用 for in 语句时获取到的属性值的顺序一致。</p>
+<p>具体的代码示例如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123; <span class="attr">x</span>: <span class="string">'xxx'</span>, <span class="attr">y</span>: <span class="number">1</span> &#125;;</span><br><span class="line"><span class="built_in">Object</span>.values(obj); <span class="comment">// ['xxx', 1]</span></span><br><span class="line"><span class="keyword">const</span> obj = [<span class="string">'e'</span>, <span class="string">'s'</span>, <span class="string">'8'</span>]; <span class="comment">// same as &#123; 0: 'e', 1: 's', 2: '8' &#125;;</span></span><br><span class="line"><span class="built_in">Object</span>.values(obj); <span class="comment">// ['e', 's', '8']</span></span><br><span class="line"><span class="comment">// when we use numeric keys, the values returned in a numerical </span></span><br><span class="line"><span class="comment">// order according to the keys</span></span><br><span class="line"><span class="keyword">const</span> obj = &#123; <span class="number">10</span>: <span class="string">'xxx'</span>, <span class="number">1</span>: <span class="string">'yyy'</span>, <span class="number">3</span>: <span class="string">'zzz'</span> &#125;;</span><br><span class="line"><span class="built_in">Object</span>.values(obj); <span class="comment">// ['yyy', 'zzz', 'xxx']</span></span><br><span class="line"><span class="built_in">Object</span>.values(<span class="string">'es8'</span>); <span class="comment">// ['e', 's', '8']</span></span><br></pre></td></tr></table></figure>
+<p>Object.entries 函数与 Object.values 函数类似，也是返回一个数组，只不过这个数组是一个以源对象（参数）的可枚举属性的键值对为数组 [key, value] 的 n 行 2 列的数组。它的返回顺序与 Object.values 函数类似。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123; <span class="attr">x</span>: <span class="string">'xxx'</span>, <span class="attr">y</span>: <span class="number">1</span> &#125;;</span><br><span class="line"><span class="built_in">Object</span>.entries(obj); <span class="comment">// [['x', 'xxx'], ['y', 1]]</span></span><br><span class="line"><span class="keyword">const</span> obj = [<span class="string">'e'</span>, <span class="string">'s'</span>, <span class="string">'8'</span>];</span><br><span class="line"><span class="built_in">Object</span>.entries(obj); <span class="comment">// [['0', 'e'], ['1', 's'], ['2', '8']]</span></span><br><span class="line"><span class="keyword">const</span> obj = &#123; <span class="number">10</span>: <span class="string">'xxx'</span>, <span class="number">1</span>: <span class="string">'yyy'</span>, <span class="number">3</span>: <span class="string">'zzz'</span> &#125;;</span><br><span class="line"><span class="built_in">Object</span>.entries(obj); <span class="comment">// [['1', 'yyy'], ['3', 'zzz'], ['10': 'xxx']]</span></span><br><span class="line"><span class="built_in">Object</span>.entries(<span class="string">'es8'</span>); <span class="comment">// [['0', 'e'], ['1', 's'], ['2', '8']]</span></span><br></pre></td></tr></table></figure>
+<h3 id="getOwnPropertyDescriptors"><a href="#getOwnPropertyDescriptors" class="headerlink" title="getOwnPropertyDescriptors"></a>getOwnPropertyDescriptors</h3><p>Object 中还有一个新成员，那就是 Object.getOwnPropertyDescriptors 函数。该函数返回指定对象（参数）的所有自身属性描述符。所谓自身属性描述符就是在对象自身内定义，不是通过原型链继承来的属性。</p>
+<p>有两种描述符号类型：</p>
+<ol>
+<li>数据描述符（Data descriptor）</li>
+<li>存取器描述符（Accessor descriptor）</li>
+</ol>
+<p>存取描述符有必须的属性：get和set（可以只有get或set），以及可选的属性：configurable和enumerable<br>该函数返回的每个描述符对象可能会有的 key 值分别是：configurable、enumerable、writable、get、set和value。</p>
+<p>示例一：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123; </span><br><span class="line"><span class="keyword">get</span> es7() &#123; <span class="keyword">return</span> <span class="number">777</span>; &#125;,</span><br><span class="line"><span class="keyword">get</span> es8() &#123; <span class="keyword">return</span> <span class="number">888</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">Object</span>.getOwnPropertyDescriptor(obj);</span><br><span class="line"><span class="comment">// &#123;</span></span><br><span class="line"><span class="comment">// es7: &#123;</span></span><br><span class="line"><span class="comment">// configurable: true,</span></span><br><span class="line"><span class="comment">// enumerable: true,</span></span><br><span class="line"><span class="comment">// get: function es7()&#123;&#125;, //the getter function</span></span><br><span class="line"><span class="comment">// set: undefined</span></span><br><span class="line"><span class="comment">// &#125;,</span></span><br><span class="line"><span class="comment">// es8: &#123;</span></span><br><span class="line"><span class="comment">// configurable: true,</span></span><br><span class="line"><span class="comment">// enumerable: true,</span></span><br><span class="line"><span class="comment">// get: function es8()&#123;&#125;, //the getter function</span></span><br><span class="line"><span class="comment">// set: undefined</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br><span class="line"><span class="comment">// &#125;</span></span><br></pre></td></tr></table></figure>
+<p>示例二：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&gt; <span class="keyword">let</span> azatsBooks = &#123; </span><br><span class="line">  books: [<span class="string">'React Quickly'</span>],</span><br><span class="line">  <span class="keyword">get</span> latest() &#123;</span><br><span class="line">    <span class="keyword">let</span> numberOfBooks = <span class="keyword">this</span>.books.length</span><br><span class="line">    <span class="keyword">if</span> (numberOfBooks == <span class="number">0</span>) <span class="keyword">return</span> <span class="literal">undefined</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.books[numberOfBooks - <span class="number">1</span>]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">​</span><br><span class="line">&gt; <span class="built_in">Object</span>.getOwnPropertyDescriptor(azatsBooks, <span class="string">'books'</span>)</span><br><span class="line">​</span><br><span class="line"><span class="built_in">Object</span></span><br><span class="line">  configurable: <span class="literal">true</span></span><br><span class="line">  enumerable: <span class="literal">true</span></span><br><span class="line">  value: <span class="built_in">Array</span>[<span class="number">1</span>]</span><br><span class="line">  writable: <span class="literal">true</span></span><br><span class="line">  __proto__: <span class="built_in">Object</span></span><br><span class="line"> </span><br><span class="line">&gt; <span class="built_in">Object</span>.getOwnPropertyDescriptor(azatsBooks, <span class="string">'latest'</span>)</span><br><span class="line"> </span><br><span class="line"><span class="built_in">Object</span></span><br><span class="line">  configurable: truee</span><br><span class="line">  numerable: <span class="literal">true</span></span><br><span class="line">  <span class="keyword">get</span>: latest()</span><br><span class="line">  <span class="keyword">set</span>: undefined</span><br><span class="line">  __proto__: Object</span><br><span class="line"> </span><br><span class="line">&gt; console.log(Object.getOwnPropertyDescriptors(azatsBooks))</span><br><span class="line">​</span><br><span class="line">Object</span><br><span class="line">  books: Object</span><br><span class="line">    configurable: true</span><br><span class="line">    enumerable: true</span><br><span class="line">    value: Array[1]</span><br><span class="line">    writable: true</span><br><span class="line">    __proto__: Object</span><br><span class="line">  latest: Object</span><br><span class="line">    configurable: true</span><br><span class="line">    enumerable: true</span><br><span class="line">    <span class="keyword">get</span>: latest()</span><br><span class="line">    <span class="keyword">set</span>: undefined</span><br><span class="line">    __proto__: Object</span><br><span class="line">  __proto__: Object</span><br></pre></td></tr></table></figure>
+<p>在ES5中，开发者要使用Object.assign()来拷贝对象, Object.assign()分配属性只有copy和定义新的属性。当我们使用更加复杂对象和类原型，这可能会出问题。<br>Object.getOwnPropertyDescriptors允许创建真实的对象浅副本并创建子类,它通过给开发者描述符来做到这一点.在Object.create(prototype, object)放入描述符后，返回一个真正的浅拷贝</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.create(</span><br><span class="line">  <span class="built_in">Object</span>.getPrototypeOf(obj),</span><br><span class="line">  <span class="built_in">Object</span>.getOwnPropertyDescriptors(obj)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>或者你可以合并两个对象target和source如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Object</span>.defineProperties(</span><br><span class="line">  target,</span><br><span class="line">  <span class="built_in">Object</span>.getOwnPropertyDescriptors(source)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="函数参数列表结尾允许逗号"><a href="#函数参数列表结尾允许逗号" class="headerlink" title="函数参数列表结尾允许逗号"></a>函数参数列表结尾允许逗号</h3><p>在函数参数列表中最后一个参数之后的逗号以及函数调用时最后一个参数之后的逗号。ES8允许在函数定义或者函数调用时，最后一个参数之后存在一个结尾逗号而不报 SyntaxError 的错误。<br>示例代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">函数声明时</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">es8</span>(<span class="params">var1, var2, var3,</span>) </span>&#123;</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">函数调用时</span><br><span class="line">es8(<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>,);ES8的这项新特性受启发于对象或者数组中最后一项内容之后的逗号，如 [<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>,] 和 &#123; <span class="attr">x</span>: <span class="number">1</span>, &#125; 。</span><br></pre></td></tr></table></figure>
+<h3 id="异步函数"><a href="#异步函数" class="headerlink" title="异步函数"></a>异步函数</h3><p>由 async 关键字定义的函数声明定义了一个可以异步执行的函数，它返回一个 AsyncFunction 类型的对象。异步函数的内在运行机制和 Generator 函数非常类似，但是不能转化为 Generator 函数。</p>
+<p>示例代码如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">fetchTextByPromise</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123; </span><br><span class="line">    setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123; </span><br><span class="line">      resolve(<span class="string">"es8"</span>);</span><br><span class="line">    &#125;, <span class="number">2000</span>);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line">​</span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">sayHello</span>(<span class="params"></span>) </span>&#123; </span><br><span class="line">  <span class="keyword">const</span> externalFetchedText = <span class="keyword">await</span> fetchTextByPromise();</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`Hello, <span class="subst">$&#123;externalFetchedText&#125;</span>`</span>); <span class="comment">// Hello, es8</span></span><br><span class="line">&#125;</span><br><span class="line">​</span><br><span class="line"><span class="comment">// 调用</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">1</span>);</span><br><span class="line">sayHello();</span><br><span class="line"><span class="built_in">console</span>.log(<span class="number">2</span>);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line"><span class="number">1</span> <span class="comment">// immediately</span></span><br><span class="line"><span class="number">2</span> <span class="comment">// immediately</span></span><br><span class="line">Hello, es8 <span class="comment">// after 2 seconds</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/19/vertical-horizatal-center/" rel="next" title="【CSS trick】垂直居中">
+                <i class="fa fa-chevron-left"></i> 【CSS trick】垂直居中
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/24/interview/" rel="prev" title="结构化面试 - 前端篇">
+                结构化面试 - 前端篇 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ES7"><span class="nav-number">1.</span> <span class="nav-text">ES7</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Array-prototype-includes"><span class="nav-number">1.1.</span> <span class="nav-text">Array.prototype.includes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES8"><span class="nav-number">2.</span> <span class="nav-text">ES8</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#String-padding"><span class="nav-number">2.1.</span> <span class="nav-text">String padding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-values-amp-Object-entries"><span class="nav-number">2.2.</span> <span class="nav-text">Object.values &amp; Object.entries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#getOwnPropertyDescriptors"><span class="nav-number">2.3.</span> <span class="nav-text">getOwnPropertyDescriptors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#函数参数列表结尾允许逗号"><span class="nav-number">2.4.</span> <span class="nav-text">函数参数列表结尾允许逗号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异步函数"><span class="nav-number">2.5.</span> <span class="nav-text">异步函数</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="MITM攻击iMessage是很复杂的，它依赖于PUSH协议，以及所有的协议层都进行了大量的加密。在这一章节，我们将会研究对iMessage进行MITM攻击的条件。现在我们希望协议能够更加的透明。 为此，我们将会在很多地方设置一个攻击者：在发送者和苹果公司服务器之间，在苹果公司服务器和接收者之间。如果你希望获得一个快速简单的概述，或许你应该先看一下我们描述MITM的原始草图。">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iMessage Privacy (2)">
+<meta property="og:url" content="https://yang2012.github.io/2013/12/07/imessage-privacy-2/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="MITM攻击iMessage是很复杂的，它依赖于PUSH协议，以及所有的协议层都进行了大量的加密。在这一章节，我们将会研究对iMessage进行MITM攻击的条件。现在我们希望协议能够更加的透明。 为此，我们将会在很多地方设置一个攻击者：在发送者和苹果公司服务器之间，在苹果公司服务器和接收者之间。如果你希望获得一个快速简单的概述，或许你应该先看一下我们描述MITM的原始草图。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/hand_schema.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/mitm1.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/mitm2.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/mitm3.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/mitm4.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/mitm5.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/aes1.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/aes1.png">
+<meta property="og:updated_time" content="2019-04-23T10:32:04.869Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iMessage Privacy (2)">
+<meta name="twitter:description" content="MITM攻击iMessage是很复杂的，它依赖于PUSH协议，以及所有的协议层都进行了大量的加密。在这一章节，我们将会研究对iMessage进行MITM攻击的条件。现在我们希望协议能够更加的透明。 为此，我们将会在很多地方设置一个攻击者：在发送者和苹果公司服务器之间，在苹果公司服务器和接收者之间。如果你希望获得一个快速简单的概述，或许你应该先看一下我们描述MITM的原始草图。">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_2/hand_schema.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2013/12/07/imessage-privacy-2/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>iMessage Privacy (2) | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2013/12/07/imessage-privacy-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iMessage Privacy (2)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2013-12-07 00:00:00" itemprop="dateCreated datePublished" datetime="2013-12-07T00:00:00+08:00">2013-12-07</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MITM攻击"><a href="#MITM攻击" class="headerlink" title="MITM攻击"></a>MITM攻击</h2><p>iMessage是很复杂的，它依赖于PUSH协议，以及所有的协议层都进行了大量的加密。在这一章节，我们将会研究对iMessage进行MITM攻击的条件。现在我们希望协议能够更加的透明。</p>
+<p>为此，我们将会在很多地方设置一个攻击者：在发送者和苹果公司服务器之间，在苹果公司服务器和接收者之间。如果你希望获得一个快速简单的概述，或许你应该先看一下我们描述MITM的原始草图。</p>
+<p><img src="/images/post/iMessage_Privacy_2/hand_schema.png" alt="hand_schema"></p>
+<a id="more"></a>
+<h3 id="测试协议"><a href="#测试协议" class="headerlink" title="测试协议"></a>测试协议</h3><p>正如之前所见，iMessage所使用的两个主要服务是PUSH服务器和ESS服务器。因此，为了进行攻击，我们需要冒充这些服务器。有很多方法可以实现，比如ARP欺骗和BGP路由注入（如果你可以的话），而我们只是简单通过修改/etc/hosts的方式，就像之前的PUSH代理一样。</p>
+<p>以下是我们所使用的工具：</p>
+<ul>
+<li>能够运行下面工具的Python脚本</li>
+<li>PushProxy，以及Quarkslab的imessage-mitm.py处理器，来截取iMessage</li>
+<li>Quarkslab的ess-mitm.py，来截取和修改Apple ESS响应</li>
+<li>一个DNS代理软件。我们选择了dnschef。</li>
+</ul>
+<p>从加密的角度来说，我们往目标keychain中添加了一个root CA，从而让我们可以使用我们自己的证书而不会被iDevice拒绝。</p>
+<p>这样，我们就准备好了所有所需的工具。</p>
+<h3 id="单边MITM"><a href="#单边MITM" class="headerlink" title="单边MITM"></a>单边MITM</h3><p>现在，攻击者位于发送者和苹果公司服务器之间，并且在发送者的设备上。我们姑且把发送者叫做Dhillon，接收者叫做Belinda，在中间的那个坏家伙叫做Evil。我们将会一步一步得讲解是如何进行攻击的。</p>
+<p>首先，我们先看看一下消息的传播：</p>
+<p><img src="/images/post/iMessage_Privacy_2/mitm1.png" alt="mitm"></p>
+<ol>
+<li>Dhillon给Belinda写了一条消息。</li>
+<li>Dhillon的iDevice向ess.apple.com发送请求。</li>
+<li>Evil截取到这个请求。<br>3.1 Evil向ess.apple.com请求Belinda的信息（Push-Token，RSA和ECDSA密钥）。<br>3.2 Evil将Bel的RSA和ECDSA密钥替换成自己的密钥。</li>
+<li>Dhillon向Belinda发送他的消息：这条信息用本来属于Bel的RSA密钥（现在已经替换成Evil的了）来进行加密，并且用Dhillon的ECDSA密钥进行签名。</li>
+<li>Evil截取到IM的payload：<br>5.1 他用自己的密钥来解密payload。<br>5.2 他可以修改这条消息，并用Belinda真正的RSA密钥来再次加密。<br>5.3 因为他是在设备上，所以他可以用Dhillon的ECDSA私钥来重新签名这条消息。</li>
+<li>Belinda接收到这条消息后，发现它被正确的签名了，所以她可以读取它。</li>
+</ol>
+<p>正如上面所说的，这里一个很关键的条件是攻击者，也就是Evil，可以获取到发送者的ECDSA私钥</p>
+<p>现在就让我们来看看当Belinda回复这条消息的时候会发生什么：</p>
+<p><img src="/images/post/iMessage_Privacy_2/mitm2.png" alt="mitm"></p>
+<ol>
+<li>Belinda写了一条消息。这条消息用Dhillon的RSA密钥来加密，并且用Belinda的ECDSA密钥来签名。</li>
+<li>这条消息发送到苹果公司的Push服务器，然后再发送到Dhillon的设备。</li>
+<li>Evil截取到这条消息：<br>3.1 因为Evil可以获取到Dhillon的RSA私钥，所以Evil可以解密这条消息。<br>3.2 Evil可以修改这条消息，并用Dhillon的RSA公钥来重新加密。<br>3.3 Evil可以用他自己的ECDSA密钥来重新签名修改后的消息，因为Dhillon已经相信了这是Bel的ECDSA密钥。</li>
+<li>Dhillon接收到这条修改的消息：<br>4.1 他用Evil的ECDSA密钥来检查消息的签名，一切都没问题。<br>4.2 所以他就用自己的RSA私钥来解密这条消息。</li>
+</ol>
+<p>同样的，在回复的过程中，一个很关键的条件是攻击者，Evil，需要获得RSA私钥。</p>
+<h3 id="双边MITM"><a href="#双边MITM" class="headerlink" title="双边MITM"></a>双边MITM</h3><p>现在，让我们来考虑一件事情：我们想要同时对Dhillon和Belinda进行MITM攻击。我们假设Evil是在Dhillon和Belinda的iDevice都运行他的MITM。</p>
+<p>现在假设，Dhillon向Belinda发送一条消息：</p>
+<p><img src="/images/post/iMessage_Privacy_2/mitm3.png" alt="mitm"></p>
+<ol>
+<li>Dhillon编写了一条消息。</li>
+<li>Dhillon的iDevice向ess.apple.com发送请求。</li>
+<li>Evil截取到这个请求：<br>3.1 Evil向ess.apple.com请求Belinda的信息（Push-Token，RSA和ECDSA密钥）。<br>3.2 Evil将Bel的RSA和ECDSA密钥替换成自己的</li>
+<li>Dhillon向Belinda发送他的消息：这条消息用Belinda的RSA密钥进行加密（实际上上Evil的），并用Dhillon的ECDSA密钥进行前面。</li>
+<li>Evil截取到IM payload：<br>5.1 他用自己的密钥来解密payload。<br>5.2 他可以修改这条消息，并用自己的密钥来加密。<br>5.3 同样的，他用自己的密钥进行签名。</li>
+<li>这条消息发送到APSN并被转发到Belinda的设备</li>
+</ol>
+<p>因为Evil对两端都进行监听，所以发送和接收的过程是相似的：</p>
+<ol start="7">
+<li>Evil在Belinda的iDevice上接收到这条消息。</li>
+<li>Evil用他自己的RSA私钥对这个payload进行解密。</li>
+<li>Evil用Belinda的RSA公钥进行加密。</li>
+<li>Evil用自己的ECDSA密钥对这个消息进行签名，因为他用自己的密钥来假装成Dhillon的。</li>
+<li>Evil将消息转发给Belinda。</li>
+<li>Belinda检查消息的签名，任何事都显得很正常，看起来是Dhillon发过来的。</li>
+<li>Belinda解密这条消息。</li>
+</ol>
+<p>整个过程的关键是Evil必须同时在两端进行监听，也即Dhillon到苹果服务器之间、Belinda到苹果服务器之间。通过这种方法，我们就不再需要获得用户的私钥。</p>
+<h3 id="MITM"><a href="#MITM" class="headerlink" title="MITM"></a>MITM</h3><p>假设攻击者可以替代苹果服务器，来进行MITM攻击。<br>要实现这种假设需要满足很多条件：</p>
+<ul>
+<li>大范围的网络控制，以便可以重定向iDevice的网络通信（通过DNS获取其他方法）</li>
+<li>让每一个目标都信任的PUSH和ESS证书</li>
+</ul>
+<p>很明显，不是每一个人都有这种能力。或许只有某些部门能够做到吧。。。谁知道呢</p>
+<p>下面是典型MITM攻击步骤：</p>
+<p><img src="/images/post/iMessage_Privacy_2/mitm4.png" alt="mitm"></p>
+<ol>
+<li>Evil把他的RSA和ECDSA发送给Dhillon。</li>
+<li>Evil把他的RSA和ECDSA发送给Belinda。</li>
+<li>当Dhillon发送消息的时候，在消息发送给Belinda之前，Evil可以查看、修改和重新签名这条消息。</li>
+<li>当Belinda接收到这条消息，她用自己的RSA密钥来解密这条消息，然后用Evil的ECDSA密钥来检查消息的签名，因为她以为这是Dhillon的密钥。</li>
+</ol>
+<p>因为Evil是通讯过程的中间进行监听，所以Belinda回复消息给Dhillon的过程是一样的：</p>
+<p><img src="/images/post/iMessage_Privacy_2/mitm5.png" alt="mitm"></p>
+<p>总的来说，要实现上面这些步骤需要以下条件：</p>
+<ol>
+<li>他需要在目标设备上有一个有效的CA。</li>
+<li>攻击者需要重定向所有目标的通信到他自己。</li>
+<li>他需要向每一个目标提供密钥，从而来冒充通信的另一端。</li>
+</ol>
+<h3 id="为什么点对点的加密不足够"><a href="#为什么点对点的加密不足够" class="headerlink" title="为什么点对点的加密不足够"></a>为什么点对点的加密不足够</h3><p>实际上，并不是所有的攻击者都可以满足上述的条件。现在，我们来看一下苹果公司在整个过程的影响：</p>
+<ol>
+<li>他需要在目标设备上有一个有效的CA -&gt; 苹果公司有这样的CA。</li>
+<li>攻击者需要重定向所有目标的通信到他自己 -&gt; 苹果公司不需要这样做，因为所有的通信都会经过苹果公司的PUSH服务器。</li>
+<li>他需要向每一个目标提供密钥，从而来冒充通信的另一端 -&gt; 苹果公司有密钥服务器，ESS。</li>
+</ol>
+<p>所以，苹果公司可以进行MITM攻击，他们只需要跟踪发送给目标的密钥。然后，你已经知道iMessage是如何加密的：一个RSA密钥加密一个AES密钥。</p>
+<p><img src="/images/post/iMessage_Privacy_2/aes1.png" alt="aes"></p>
+<p>因为苹果公司可以更改密钥，所以苹果公司可以解密AES密钥，因此，也就可以看到消息的内容了。</p>
+<p>苹果公司的声明：</p>
+<blockquote>
+</blockquote>
+<p>For example, conversations which take place over iMessage and FaceTime are protected by end-to-end encryption so no one but the sender and receiver can see or read them.Apple cannot decrypt that data.</p>
+<blockquote>
+</blockquote>
+<p>是的，正如苹果公司声明的，的确是点对点加密，但是密钥的构造并不可信，所以苹果公司可以解密你的数据，如果他们愿意的话，或者更有可能的是，他们被要求这么做。</p>
+<h2 id="防止苹果公司或者第三方的MITM攻击"><a href="#防止苹果公司或者第三方的MITM攻击" class="headerlink" title="防止苹果公司或者第三方的MITM攻击"></a>防止苹果公司或者第三方的MITM攻击</h2><p>实际上，并没有很多办法可以避免MITM攻击，因为主要的问题在于苹果公司控制着密钥的结构。</p>
+<p>所以，我们有以下两种防止方法：</p>
+<ol>
+<li>让密钥的结构更透明和更公开。</li>
+<li>用不在苹果公司控制下的密钥来加密消息。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>苹果公司宣传他们不可以查看点对点加密的iMessage很明显是错的。就正如大家所怀疑的：是的，他们真的可以！</p>
+<p>毕竟怀疑终究还是怀疑，还是得用事实来说话，所以希望我们对相关协议的深入分析，能够让大家明白苹果公司是如何能够做到这点的。</p>
+<p>但是，我们是否应该继续使用iMessage呢？一般的攻击者是不可能进行MITM攻击的，所以iMessage的安全性对于一般的用户来说，还是足够的。</p>
+<p>如果那些通信的信息是很敏感的，以至于你不希望任何的政府机构查看它的话，那你就不应该用iMessage了。</p>
+<p>苹果公司，建立了一个相对更透明的PKI，并且有详细的文档来描述相关协议。因此还是可以认为iMessage是目前最有效的和安全的实时通信系统。</p>
+<h2 id="苹果公司能够查看你的iMessage吗"><a href="#苹果公司能够查看你的iMessage吗" class="headerlink" title="苹果公司能够查看你的iMessage吗?"></a>苹果公司能够查看你的iMessage吗?</h2><p>是的，他们可以。</p>
+<p>如果你不想。然而如果你很忙但很想知道答案，那么你就应该看一下这部分内容。</p>
+<p>下面是我们发现的事实：</p>
+<ul>
+<li>基于公开的算法（AES，RSA，ECDSA）使用了合适的密钥长度和实现。</li>
+<li>密钥生成代码是开源的。</li>
+<li>在客户端和PUSH服务器之间（iMessage相关的苹果公司服务器）没有使用证书绑定。</li>
+<li>客户端和苹果公司服务器的身份认证是基于严格的强大的混淆和白盒密码，从而防止第三方iMessage客户端的使用。</li>
+<li>用户的密码是通过SSL安全通道用明文的方式发送给苹果公司服务器。对于那些在很多地方都用了这个密码的人来说，这是值得注意的，因为苹果公司可以知道这个密码。</li>
+<li>没有绑定证书+明文密码，就意味任何能够往设备中添加证书的人，都可以进行MITM攻击，从而可以得到用户的AppleID和密码。</li>
+<li>彩蛋：如果一个设备连接到iPhone Configuration Utility，苹果公司提出的一个管理iPhone设备的企业级解决方案，就会插入一个受信任的CA。所有用这个CA签名的证书都会被信任从而建立安全的SSL通信。这意味着所有使用这个应用的公司通过简单的SSL通信代理，就可以获取到他们所有员工的AppleID和密码。</li>
+<li>iMessage是在Push协议上运行，跟FaceTime，GameCenter或者通知服务一样。</li>
+<li>PUSH是在SSL通道通过5223端口连到苹果公司的PUSH服务器。</li>
+<li>每一台苹果设备都有一个唯一的Push-Token。</li>
+<li>当一个人需要发送消息的时候，客户端会去寻找所有跟目标（叫做URI）关联的Push-Tokens，从而将消息发送到这些URI注册的设备。</li>
+<li>当一个人发送一条iMessage的时候，客户端首先连接到苹果公司的密钥服务器，叫做ESS，来获取目标的公钥。</li>
+<li><p>客户端或获得两个密钥</p>
+<p>  1）一个ECDSA（256-bit），用来验证目标URI发送的消息的签名。所以当目标URI回复的时候，我们就可以用这个ECDSA来检查消息的签名。</p>
+<p>  2）一个RSA（1280-bit），用来加密发送给目标URI的iMessage。</p>
+</li>
+<li><p>iMessage的payload实际上是一个二进制的plist，把序列化的数据组装成字典。</p>
+</li>
+<li>iMessage的payload用一个随机的AES密钥来机密，这个密钥连接在加密的payload的开头，这个1280位的数据是用目标的RSA密钥来加密。</li>
+</ul>
+<p><img src="/images/post/iMessage_Privacy_2/aes1.png" alt="aes"></p>
+<ul>
+<li>每一个消息都会用发送者的ECDSA密钥来签名。</li>
+<li>iMessage可以用来发送附件。这些附件是保存在iCloud中，用AES会话密钥来加密。</li>
+<li><p>因为苹果公司控制着ESS服务器，所有的iMessage都会发送到苹果公司的PUSH服务器，所以苹果公司可以进行MITM攻击：</p>
+<p>1）苹果公司把假的RSA公钥/ECDSA密钥发送给发送者。</p>
+<p>2）然后苹果公司就可以解密，修改这条消息的payload，并在发送给目标之前重新签名。</p>
+</li>
+<li><p>所以，是的，虽然有点对点的加密，但是由于密钥的构造由苹果公司控制，所以他们可以在任何时候更改密钥来查看我们iMessage的内容。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/12/05/imessage-privacy-1/" rel="next" title="iMessage Privacy (1)">
+                <i class="fa fa-chevron-left"></i> iMessage Privacy (1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/12/11/understanding-and-using-raccommand/" rel="prev" title="Understanding and Using RACCommand">
+                Understanding and Using RACCommand <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MITM攻击"><span class="nav-number">1.</span> <span class="nav-text">MITM攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试协议"><span class="nav-number">1.1.</span> <span class="nav-text">测试协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单边MITM"><span class="nav-number">1.2.</span> <span class="nav-text">单边MITM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#双边MITM"><span class="nav-number">1.3.</span> <span class="nav-text">双边MITM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MITM"><span class="nav-number">1.4.</span> <span class="nav-text">MITM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么点对点的加密不足够"><span class="nav-number">1.5.</span> <span class="nav-text">为什么点对点的加密不足够</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#防止苹果公司或者第三方的MITM攻击"><span class="nav-number">2.</span> <span class="nav-text">防止苹果公司或者第三方的MITM攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#苹果公司能够查看你的iMessage吗"><span class="nav-number">4.</span> <span class="nav-text">苹果公司能够查看你的iMessage吗?</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

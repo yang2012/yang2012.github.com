@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="在网上搜索了一些资料后，搭建了现在的这个博客。兴奋之余，想跟大家分享下如何创建属于自己的博客的方法，所以写了这篇博文。（本篇博文主要参考了破船之家和唐巧的技术博客的两篇博文，大家可以多多关注下，本人是挺喜欢的这两个博客的。）">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build My Blog">
+<meta property="og:url" content="https://yang2012.github.io/2013/10/31/build-my-blog/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="在网上搜索了一些资料后，搭建了现在的这个博客。兴奋之余，想跟大家分享下如何创建属于自己的博客的方法，所以写了这篇博文。（本篇博文主要参考了破船之家和唐巧的技术博客的两篇博文，大家可以多多关注下，本人是挺喜欢的这两个博客的。）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/octopress.png">
+<meta property="og:updated_time" content="2019-04-23T10:32:45.707Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Build My Blog">
+<meta name="twitter:description" content="在网上搜索了一些资料后，搭建了现在的这个博客。兴奋之余，想跟大家分享下如何创建属于自己的博客的方法，所以写了这篇博文。（本篇博文主要参考了破船之家和唐巧的技术博客的两篇博文，大家可以多多关注下，本人是挺喜欢的这两个博客的。）">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/octopress.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2013/10/31/build-my-blog/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Build My Blog | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2013/10/31/build-my-blog/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Build My Blog
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2013-10-31 00:00:00" itemprop="dateCreated datePublished" datetime="2013-10-31T00:00:00+08:00">2013-10-31</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/tool/" itemprop="url" rel="index"><span itemprop="name">tool</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/images/post/octopress.png" alt="Octopress"></p>
+<p>在网上搜索了一些资料后，搭建了现在的这个博客。兴奋之余，想跟大家分享下如何创建属于自己的博客的方法，所以写了这篇博文。（本篇博文主要参考了<a href="http://beyondvincent.com/blog/2013/08/03/108-creating-a-github-blog-using-octopress/" target="_blank" rel="noopener">破船之家</a>和<a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/" target="_blank" rel="noopener">唐巧的技术博客</a>的两篇博文，大家可以多多关注下，本人是挺喜欢的这两个博客的。）</p>
+<a id="more"></a>
+<h2 id="安装Ruby"><a href="#安装Ruby" class="headerlink" title="安装Ruby"></a>安装Ruby</h2><p>Octopress需要Ruby环境，RVM(Ruby Version Manager)负责安装和管理Ruby的环境。<br>所以我们先在终端输入如下命令，来安装RVM：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl -L https://get.rvm.io | bash -s stable --ruby</span><br></pre></td></tr></table></figure></p>
+<p>接着是安装Ruby，在终端依次运行如下命令：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl -L https://get.rvm.io | bash -s stable --ruby</span><br><span class="line">$ rvm install</span><br></pre></td></tr></table></figure></p>
+<p>完成上面的操作之后，运行<code>ruby --version</code>应该可以看到ruby的版本，那就代表Ruby环境已经安装好了。</p>
+<p>详情请参考：<a href="http://octopress.org/docs/setup/rvm/&quot;" target="_blank" rel="noopener">Installing Ruby with RVM</a></p>
+<h2 id="安装Octopress"><a href="#安装Octopress" class="headerlink" title="安装Octopress"></a>安装Octopress</h2><p>在安装Octopress之前，请确保你的电脑上已经安装有git了，在终端输入<code>git --version</code>，应该可以看到电脑中的git版本，如果没有显示相关内容，请先安装git。</p>
+<p>git安装之后，利用git命令将octopress从github上clone到本机，如下命令：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git clone git://github.com/imathis/octopress.git octopress</span><br><span class="line">$ cd octopress</span><br><span class="line">$ ruby --version</span><br></pre></td></tr></table></figure></p>
+<p>接着安装相关依赖项：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ gem install bundler</span><br><span class="line">$ rbenv rehash    # If you use rbenv, rehash to be able to run the bundle command</span><br><span class="line">$ bundle install</span><br></pre></td></tr></table></figure></p>
+<p>最后安装默认的Octopress主题。<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rake install</span><br></pre></td></tr></table></figure></p>
+<p>详情请参考：<a href="http://octopress.org/docs/setup/" target="_blank" rel="noopener">Octopress Setup</a></p>
+<h2 id="配置Octopress"><a href="#配置Octopress" class="headerlink" title="配置Octopress"></a>配置Octopress</h2><p>Octopress的作者已经尽量让配置简化了。大多数情况下只需要配置_config.yml和Rakefile文件即可。其中Rakefile是跟博客部署相关，一般情况下并不需要修改这个文件，除非使用了rsync。</p>
+<p><code>_config.yml</code>是博客重要的一个配置文件，在<code>_config.yml</code>文件中有三大配置项：Main Configs、Jekyll &amp; Plugins和3rd Party Settings。</p>
+<p>注意，<strong><em><code>_config.yml</code>文件中其中url是必须要填写的</em></strong>，这里的url是在github上创建的一个仓库地址，具体请看第四步中创建的地址。另外再修改一下title、subtitle和author，根据需求，在开启一些第三方组件服务。</p>
+<p>关于<code>_config.yml</code>文件中的更多内容，请看这里的内容：<code>Configuring Octopress</code><br>建议：最好把里面的twitter相关的信息全部删掉，否则由于GFW的原因，将会造成页面load很慢。同理，修改定制文件<code>/source/_includes/custom/head.html</code>，把google的自定义字体去掉。这是根据<a href="http://blog.devtang.com/blog/2012/02/10/setup-blog-based-on-github/" target="_blank" rel="noopener">唐巧的博文中—配置</a>。</p>
+<h2 id="将博客部署到Github"><a href="#将博客部署到Github" class="headerlink" title="将博客部署到Github"></a>将博客部署到Github</h2><p>Github的<a href="http://pages.github.com/" target="_blank" rel="noopener">Page service</a>可以免费托管博客，并且还可以自定义域名。<br>首先需要在GitHub上创建一个仓库，并将仓库名称按照这样的方式进行命名：<code>username.github.com</code>或<code>organization.github.com</code>(<strong>注意：这里的username必须跟你github的账户名一样。</strong>)。</p>
+<p>等后面配置完毕之后，我们就可以在浏览器中使用页面地址<code>http://username.github.com</code>来访问我们的博客。一般来说，我们希望在将博客的源码放到source分支下，并把生成的内容提交到master分支。</p>
+<p>创建好仓库之后，我们需要利用octopress的一个配置rake任务来自动配置上面创建的仓库：可以让我们方便的部署GitHub page。在终端输入如下命令：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ rake setup_github_pages</span><br></pre></td></tr></table></figure></p>
+<p>上面的命令会做一些事情(详细介绍看下面给出的参考链接)。其中最主要的就是创建一个_deploy目录，目录用来存放部署到master分支的内容。期间会要求你输入仓库的url，根据提示，进行输入即可。<br>完成上面的命令之后，我们就可以生成博客并真正的部署到仓库中了。执行如下命令：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rake generate</span><br><span class="line">$ rake deploy</span><br></pre></td></tr></table></figure></p>
+<p>上面的命令首先生成博客文件，并将生成的博客文件拷贝到_deploy/目录下，然后将这些内容添加到git中，并commit和push到仓库的master分支。<br>现在可以访问<code>http://username.github.com</code>了。</p>
+<p>至此，我们的博客已经完成基本的部署，不过博客的source需要单独提交，执行如下命令就可以将source提交到仓库的source分支下。<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ git add .</span><br><span class="line">$ git commit -m &apos;Initial source commit&apos;</span><br><span class="line">$ git push origin source</span><br></pre></td></tr></table></figure><br>如果在部署到仓库之前，需要先预览一下博客，可以在终端输入<code>rake preview</code>命令，然后就能在浏览器中进行本地预览访问了:<code>http://127.0.0.1:4000/</code>或<code>http://localhost:4000/</code>，效果跟仓库中的一样。</p>
+<p>参考：<a href="http://octopress.org/docs/deploying/" target="_blank" rel="noopener">Deploying to Github Pages</a></p>
+<h2 id="撰写博客"><a href="#撰写博客" class="headerlink" title="撰写博客"></a>撰写博客</h2><p>我们一般撰写博客，主要是用到了下面这几个命令</p>
+<figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rake new_post[‘article name’]，生成博文框架</span><br><span class="line">rake generate，生成所需的静态文件</span><br><span class="line">rake watch，实时检测文件变化并生成新内容</span><br><span class="line">rake preview，本地预览</span><br><span class="line">rake deploy，发布文件</span><br></pre></td></tr></table></figure>
+<p>这些命令的详细介绍可以参看<a href="http://octopress.org/docs/blogging/" target="_blank" rel="noopener">Blogging Basics</a></p>
+<p>所有的博文都必须存储在<code>source/_posts</code>目录下，并且需要按照Jekyll的命名规范对文章进行命名：<code>YYYY-MM-DD-post-title.markdown</code>。文章的名字会被当做url的一部分，而其中的日期用于对博文的区分和排序。</p>
+<p>通过Octopress提供的task可以正确的按照命名规范创建一个博文，并且在博文中会附带常用的一些yaml元数据。只需要在终端输入如下命令：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rake new_post[&quot;title&quot;]</span><br></pre></td></tr></table></figure><br>其中title为博文的文件名，创建出来的文件默认是markdown格式。上面的命令会创建出这样一个文件：<code>source/_posts/2013-08-03-title.markdown</code>。</p>
+<p>注意，如果你使用了<code>oh-my-zsh</code>，可能会出现<code>zsh: no matches found: new_post[title]</code>，则你需要在<code>.zshrc</code>文件中加入<code>alias rake=&quot;noglob rake&quot;</code>,详情请参考<a href="https://github.com/imathis/octopress/issues/117" target="_blank" rel="noopener">Not compatible with Zsh</a></p>
+<p>接着我们就可以在这个文件中写我们的博文啦。完成之后，我们可以预览和部署博文。下面是创建并部署博文的一个完整过程：<br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ rake new_post[&quot;New Post&quot;]</span><br><span class="line">$ rake generate</span><br><span class="line">$ git add .</span><br><span class="line">$ git commit -am &quot;Some comment here.&quot; </span><br><span class="line">$ git push origin source</span><br><span class="line">$ rake deploy</span><br></pre></td></tr></table></figure></p>
+<p>详情参考：<a href="http://octopress.org/docs/blogging/" target="_blank" rel="noopener">Blogging Basics</a></p>
+<h2 id="额外配置"><a href="#额外配置" class="headerlink" title="额外配置"></a>额外配置</h2><h3 id="评论和分享功能"><a href="#评论和分享功能" class="headerlink" title="评论和分享功能"></a>评论和分享功能</h3><p>这里主要介绍在<code>默认主题</code>下如何添加评论和分享功能。步骤如下：</p>
+<ul>
+<li>在_config.yml中增加一项： <code>weibo_share: true</code>；</li>
+<li>修改 <code>source/_includes/post/sharing.html</code> ，引入<code>post/weibo.html</code>；</li>
+<li>增加文件：<code>source/_includes/post/weibo.html</code>；</li>
+<li>访问<a href="http://www.jiathis.com/" target="_blank" rel="noopener">http://www.jiathis.com/</a>，获取分享的代码</li>
+<li>访问<a href="http://uyan.cc/" target="_blank" rel="noopener">http://uyan.cc/</a>，获得评论的代码</li>
+<li>将上面2步的代码都加入到<code>weibo.html</code>中即可</li>
+</ul>
+<h3 id="更换主题"><a href="#更换主题" class="headerlink" title="更换主题"></a>更换主题</h3><p>下面以本篇博文使用的cotoflat主题来讲解如何更换Octopress的主题，这里使用的主题的相关内容可以到这里了解<a href="https://github.com/alexgaribay/octoflat" target="_blank" rel="noopener">octoflat</a><br><figure class="highlight plain"><figcaption><span>bash</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cd your_octopress_dir</span><br><span class="line">$ git clone https://github.com/alexgaribay/octoflat .themes/octoflat</span><br><span class="line">$ rake install[&apos;octoflat&apos;]</span><br><span class="line">$ rake generate</span><br></pre></td></tr></table></figure></p>
+<p>几乎所有的主题的更换方法都基本如上几个步骤，有兴趣的读者可以到<a href="https://github.com/imathis/octopress/wiki/3rd-Party-Octopress-Themes" target="_blank" rel="noopener">这里</a>来看看是否有自己喜欢的主题</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/11/03/setting-up-your-custom-domain-with-octopress-and-github/" rel="prev" title="Setting up your custom domain with octopress and github">
+                Setting up your custom domain with octopress and github <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Ruby"><span class="nav-number">1.</span> <span class="nav-text">安装Ruby</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Octopress"><span class="nav-number">2.</span> <span class="nav-text">安装Octopress</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置Octopress"><span class="nav-number">3.</span> <span class="nav-text">配置Octopress</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将博客部署到Github"><span class="nav-number">4.</span> <span class="nav-text">将博客部署到Github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#撰写博客"><span class="nav-number">5.</span> <span class="nav-text">撰写博客</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#额外配置"><span class="nav-number">6.</span> <span class="nav-text">额外配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#评论和分享功能"><span class="nav-number">6.1.</span> <span class="nav-text">评论和分享功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#更换主题"><span class="nav-number">6.2.</span> <span class="nav-text">更换主题</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

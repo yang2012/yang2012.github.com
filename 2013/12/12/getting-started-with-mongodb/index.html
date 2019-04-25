@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="mongodb主要的命令： mongo db - 显示当前所在的数据库 show dbs - 显示所有的数据库 use database - 切换到某个数据库 help - 帮助 collectionName = { field : value } - 创建一个新的名为collectionName的集合 db.collectionName.insert(documentName) - 往名为col">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Getting Started with MongoDB">
+<meta property="og:url" content="https://yang2012.github.io/2013/12/12/getting-started-with-mongodb/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="mongodb主要的命令： mongo db - 显示当前所在的数据库 show dbs - 显示所有的数据库 use database - 切换到某个数据库 help - 帮助 collectionName = { field : value } - 创建一个新的名为collectionName的集合 db.collectionName.insert(documentName) - 往名为col">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-23T10:28:05.888Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Getting Started with MongoDB">
+<meta name="twitter:description" content="mongodb主要的命令： mongo db - 显示当前所在的数据库 show dbs - 显示所有的数据库 use database - 切换到某个数据库 help - 帮助 collectionName = { field : value } - 创建一个新的名为collectionName的集合 db.collectionName.insert(documentName) - 往名为col">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2013/12/12/getting-started-with-mongodb/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Getting Started with MongoDB | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2013/12/12/getting-started-with-mongodb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Getting Started with MongoDB
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2013-12-12 00:00:00" itemprop="dateCreated datePublished" datetime="2013-12-12T00:00:00+08:00">2013-12-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mongodb/" itemprop="url" rel="index"><span itemprop="name">mongodb</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>mongodb主要的命令：</p>
+<pre><code>mongo
+db - 显示当前所在的数据库
+show dbs - 显示所有的数据库
+use database - 切换到某个数据库
+help - 帮助
+collectionName = { field : value } - 创建一个新的名为collectionName的集合
+db.collectionName.insert(documentName) - 往名为collectionName的集合中插入新的名为documentName的稳定
+db.collectionName.find() - 在collectionName这个集合中查询所有的文档
+it - 展示下一个结果集
+</code></pre><p>MongoDB会自动在你第一次使用某个集合的时候，隐式创建对应的集合。你是不需要事先手动创建集合。如上，当你输入<code>db.collectionName.insert(documentName)</code>的时候，即你第一次往这个集合插入一个文档的时候，mongod会自动创建对应的数据库<code>db</code>和集合<code>collectionName</code>。另外，因为MongoDB使用<a href="http://docs.mongodb.org/manual/faq/fundamentals/#faq-schema-free" target="_blank" rel="noopener">dynamic schemas</a>，所以再插入之前，你也不需要声明文档的结构</p>
+<a id="more"></a>
+<h2 id="使用指针"><a href="#使用指针" class="headerlink" title="使用指针"></a>使用指针</h2><p>当你查询一个集合的时候，MongoDB会返回一个“指针”对象，这个指针会指向查询的结果。<code>mongo</code>会根据这个指针展示查询结果。<code>mongo</code>通过移动这个指针20次来展示前20个结果，然后在接收到下一次的请求后再继续移动指针，直至展示完所有的查询结果，而不是立马返回所有的查询结果。详细的信息可以查看<a href="http://docs.mongodb.org/manual/reference/method/db.collection.find/#crud-read-cursor" target="_blank" rel="noopener">Iterate the Returned Cursor</a>。</p>
+<h2 id="在循环中移动指针"><a href="#在循环中移动指针" class="headerlink" title="在循环中移动指针"></a>在循环中移动指针</h2><p>接下来，我们来看一个例子，看看如何在循环中移动指针。假设我们现在有一个数据库叫做test，以及一个集合叫做testData，并且已经忘这个集合中插入了25个文档。</p>
+<ol>
+<li><p>在shell中，查询集合testData，并且将指针指赋予变量c：</p>
+<p> var c = db.testData.find()</p>
+</li>
+<li><p>通过while循环来迭代移动指针来展示所有的查询结果：<code>while ( c.hasNext() ) printjson( c.next() )</code><br>其中，方法hasNext()用来检查是否还有下一个文档，方法next()用来返回下一个文档，而方法printjson()来用json相似的格式来展示一个文档。上面这个操作会展示所有的20个文档。假如文档只有一个简单的域x，则这个操作会显示这个域，以及每个文档的ObjectId：</p>
+<p> { “_id” : ObjectId(“51a7dc7b2cacf40b79990be6”), “x” : 1 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990be7”), “x” : 2 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990be8”), “x” : 3 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990be9”), “x” : 4 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bea”), “x” : 5 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990beb”), “x” : 6 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bec”), “x” : 7 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bed”), “x” : 8 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bee”), “x” : 9 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bef”), “x” : 10 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf0”), “x” : 11 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf1”), “x” : 12 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf2”), “x” : 13 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf3”), “x” : 14 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf4”), “x” : 15 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf5”), “x” : 16 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf6”), “x” : 17 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf7”), “x” : 18 }<br> { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf8”), “x” : 19 }    { “_id” : ObjectId(“51a7dc7b2cacf40b79990bf9”), “x” : 20 }</p>
+</li>
+</ol>
+<h2 id="查询特定的文档"><a href="#查询特定的文档" class="headerlink" title="查询特定的文档"></a>查询特定的文档</h2><p>MongoDB有很强大的查询系统，能够让你根据特定的域和值来选择和过滤集合中的文档。你可以在<a href="http://docs.mongodb.org/manual/tutorial/query-documents/#read-operations-query-document" target="_blank" rel="noopener">Query Document</a>和<a href="http://docs.mongodb.org/manual/core/read-operations/" target="_blank" rel="noopener">Read Operations</a>查看到关于MongoDB查询的详细描述</p>
+<p>假如你在方法<code>find()</code>中加入参数“query document”，则这个方法会返回一个查询文档，来说明一个查询语句要查询某个文档所需要满足的条件。</p>
+<p>假如，我们需要查询域x的值为10的文档，则只需要将参数<code>{x : 10}</code>传给方法<code>find()</code>便可：</p>
+<pre><code>db.testData.find( { x : 19} )
+</code></pre><p>然后，MongoDB就会返回所有满足这个约束的文档：</p>
+<pre><code>{ &quot;_id&quot; : ObjectId(&quot;51a7dc7b2cacf40b79990bf7&quot;), &quot;x&quot; : 18 }
+</code></pre><h2 id="返回一个特定文档"><a href="#返回一个特定文档" class="headerlink" title="返回一个特定文档"></a>返回一个特定文档</h2><p>通过方法<code>findOne()</code>可以返回满足约束的一个文档。方法<code>findOne()</code>的参数与方法<code>find()</code>一样，只是前者返回一个文档，而后者则是一个指针。你可以在<a href="http://docs.mongodb.org/manual/tutorial/query-documents/#read-operations-query-document" target="_blank" rel="noopener">Query Document</a>和<a href="http://docs.mongodb.org/manual/core/read-operations/" target="_blank" rel="noopener">Read Operations</a>查看到详细的介绍。</p>
+<p>你可以通过下面的这个命令来从集合testData中获得一个文档：</p>
+<pre><code>db.testData.findOne()
+</code></pre><h2 id="限制查询结果集中的文档数量"><a href="#限制查询结果集中的文档数量" class="headerlink" title="限制查询结果集中的文档数量"></a>限制查询结果集中的文档数量</h2><p>有时候为了提升性能，我们需要限制数据数量来控制查询结果的大小。我们可以通过方法<code>limit()</code>来规定结果集中文档的最大数量，比如<code>db.testData.find().limit(3)</code>。然后MongoDB会返回</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/12/11/understanding-and-using-raccommand/" rel="next" title="Understanding and Using RACCommand">
+                <i class="fa fa-chevron-left"></i> Understanding and Using RACCommand
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/01/20/git/" rel="prev" title="Git - Hello, git">
+                Git - Hello, git <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#使用指针"><span class="nav-number">1.</span> <span class="nav-text">使用指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在循环中移动指针"><span class="nav-number">2.</span> <span class="nav-text">在循环中移动指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询特定的文档"><span class="nav-number">3.</span> <span class="nav-text">查询特定的文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#返回一个特定文档"><span class="nav-number">4.</span> <span class="nav-text">返回一个特定文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#限制查询结果集中的文档数量"><span class="nav-number">5.</span> <span class="nav-text">限制查询结果集中的文档数量</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

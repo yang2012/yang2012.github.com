@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="本文是翻译自Quarklab’s blog的iMessage Privacy博文，如果想看原文的，请点击这里http://blog.quarkslab.com/imessage-privacy.html#id6。因为篇幅比较长，所以将会分成上下两篇，希望这两篇博文能够帮助大家更好地理解iMessage安全性相关知识。翻译不到之处，还请谅解。 iMessage或许目前最流行的即时通讯系统之一。苹果公">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iMessage Privacy (1)">
+<meta property="og:url" content="https://yang2012.github.io/2013/12/05/imessage-privacy-1/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="本文是翻译自Quarklab’s blog的iMessage Privacy博文，如果想看原文的，请点击这里http://blog.quarkslab.com/imessage-privacy.html#id6。因为篇幅比较长，所以将会分成上下两篇，希望这两篇博文能够帮助大家更好地理解iMessage安全性相关知识。翻译不到之处，还请谅解。 iMessage或许目前最流行的即时通讯系统之一。苹果公">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_1/cert_verified.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_1/aes2.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_1/aes1.png">
+<meta property="og:updated_time" content="2019-04-23T10:33:29.706Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iMessage Privacy (1)">
+<meta name="twitter:description" content="本文是翻译自Quarklab’s blog的iMessage Privacy博文，如果想看原文的，请点击这里http://blog.quarkslab.com/imessage-privacy.html#id6。因为篇幅比较长，所以将会分成上下两篇，希望这两篇博文能够帮助大家更好地理解iMessage安全性相关知识。翻译不到之处，还请谅解。 iMessage或许目前最流行的即时通讯系统之一。苹果公">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/iMessage_Privacy_1/cert_verified.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2013/12/05/imessage-privacy-1/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>iMessage Privacy (1) | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2013/12/05/imessage-privacy-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iMessage Privacy (1)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2013-12-05 00:00:00" itemprop="dateCreated datePublished" datetime="2013-12-05T00:00:00+08:00">2013-12-05</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/security/" itemprop="url" rel="index"><span itemprop="name">security</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文是翻译自Quarklab’s blog的iMessage Privacy博文，如果想看原文的，请点击这里<a href="http://blog.quarkslab.com/imessage-privacy.html#id6" target="_blank" rel="noopener">http://blog.quarkslab.com/imessage-privacy.html#id6</a>。因为篇幅比较长，所以将会分成上下两篇，希望这两篇博文能够帮助大家更好地理解iMessage安全性相关知识。翻译不到之处，还请谅解。</p>
+<p>iMessage或许目前最流行的即时通讯系统之一。苹果公司宣称iMessage是非常安全的，因为iMessage采用了高加密标准，包括点对点的加密，从而可以防止包括苹果公司在内的第三方的监听。然而，这是真的吗？</p>
+<a id="more"></a>
+<h2 id="演示文稿"><a href="#演示文稿" class="headerlink" title="演示文稿"></a>演示文稿</h2><p>你可以通过以下的链接来下载我们在HITBSecConf2013的演示文稿的幻灯片 <a href="http://blog.quarkslab.com/static/resources/2013-10-17_imessage-privacy/slides/iMessage_privacy.pdf" target="_blank" rel="noopener">http://blog.quarkslab.com/static/resources/2013-10-17_imessage-privacy/slides/iMessage_privacy.pdf</a></p>
+<h2 id="快速的回答"><a href="#快速的回答" class="headerlink" title="快速的回答"></a>快速的回答</h2><ul>
+<li>我们不是在说：苹果公司偷看了你的iMessages。</li>
+<li>我是是在说：苹果公司可以偷看你的iMessages，如果他们愿意的话，或者他们被政府要求这么做的话。</li>
+</ul>
+<p>正如苹果公司所宣称的，iMessage的确采用的点对点的加密。但是问题就在于密钥的构造是由苹果公司来控制的：如果他们愿意的话，他们可以随时更改密钥，从而可以读到我们iMessages的内容。</p>
+<p>另外，我们必须知道的是，跟消息的内容一样，元数据同样很重要。因为你是靠苹果公司来发送你的消息，所以他们会拥有你的元数据。</p>
+<p>现在，你可以继续阅读下面的文章，或者直接跳到文章的结尾，我们将在文章的结束部分进行总结。</p>
+<hr>
+<h2 id="即时通讯的监听"><a href="#即时通讯的监听" class="headerlink" title="即时通讯的监听"></a>即时通讯的监听</h2><p>多年来，每当出现一个新的即时通讯服务，就会有一大堆的人会很关心这些服务的安全性。还记得当年黑莓和Skype吗？它们在一开始的时候，都是宣称所有的信息都会被加密，而且信息是非常安全的，是不可能被监听的。但是几年之后，这被证明是虚假的<a href="#refer1" id="id1">[1]</a><a href="#refer2" id="id2">[2]</a>。</p>
+<p>对于那些在安全领域工作的人来说，这并不惊奇。至少有一个原因可以解释，那就是政府部门的存在。因为政府部门的一个很重要的职责就是确保人们的安全，所以政府部门需要监听那些危险分子。因此你的消息可能会被监视，也就不足为奇了。这个问题更多的是道德问题而不是合法性，因为那些情报机构被赋予了这些权利。</p>
+<p>最近，斯诺登事件让人们意识到实际情况比人们想象的更为糟糕：加密标准的后门，与大公司的勾结，大量的数据收集，无处不在的入侵。。。我们先不管政府部门实行监听的背景和合法性，可以看到的是，那些涉及的公司无不试图降低在这件事上的角色，并一直用一个简单的借口来推脱：我们只是服从法律。但是，不管怎样，如果一家公司一旦宣称他们是不可能监听他们所管理的消息，那么即使是被要求和政府部门合作，他们也理应从技术上的角度真的不能够解密那些信息。</p>
+<p>在斯诺登事件之后，苹果公司发布了一则声明，叫做<em>Apple’s Commitment to Customer Privacy</em>。由于那段时间内人们的问题都是关于iMessage，Siri和Facetime的安全性，因此他们清楚地回答说<a href="#refer3" id="id3">[3]</a>：</p>
+<blockquote>
+</blockquote>
+<p>There are certain categories of information which we do not provide to law enforcement or any other group because we choose not to retain it. For example, conversations which take place over iMessage and FaceTime are protected by end-to-end encryption so no one but the sender and receiver can see or read them.Apple cannot decrypt that data.</p>
+<blockquote>
+</blockquote>
+<p>（有若干信息我们并不提供给法律部门或者任何的其他组织，因为我们选择并不保留这些数据。比如说，在iMessage和Facetime上进行的对话，都是通过点对点的方式进行加密保护，所以只有发送者和接受者可以看到当中的内容。苹果公司并不能够解密这些数据。）</p>
+<p>根据这则声明所说的，苹果公司的确可以向第三方提供一些元数据（比如说，谁发送消息，谁接受消息，消息发送时间），但是对话的内容是不包括在内的。但是，接下来，我们将会证明这不是真的。尽管是点对点的加密，苹果公司仍然可以获取到那些加密的信息。但，这是不是意味着苹果公司就真的监听了我们的消息呢？这个问题或许只有苹果公司和相关部门能够回答，而我们是无法回答的。</p>
+<p>好的，接下来我们就来进行详细的分析。</p>
+<h2 id="缺少证书锁定：那又如何？"><a href="#缺少证书锁定：那又如何？" class="headerlink" title="缺少证书锁定：那又如何？"></a>缺少证书锁定：那又如何？</h2><p>首先，我们注意到，几乎所有的通信都是加密的。这相当好呀。所有发送到苹果公司服务器的会话都是通过安全的SSL通道。我们不需要知道当中使用什么协议或者报文是如何包装的。我们想要尝试的第一件事就是添加一个证书来进行MITM<a href="#refer4" id="id4">[4]</a>。</p>
+<p>实际上，我们非常惊讶地发现，这非常容易就成功了，这至少证明了iMessage并没有使用证书锁定<a href="#refer5" id="id5">[5]</a>。我们创建了一个假的CA，然后加入到iPhone的keychain，并建立一个代理来监听通讯。当代理监听到一个SSL链接，我们就生成一个由刚刚添加的CA所签名的证书，然后，就没有然后了，所有的信息都已经解密了。</p>
+<p>另一个让我们更加惊讶的发现是：通过这个SSL通讯，我们甚至可以清楚地看到我们的AppleID和密码。是的，真的是完全的明文密码。。。。。虽然有很多原因可以说明为什么会用明文的方式发送密码，比如ssh就是这样，但是在这里，我们想不到有任何的理由会让苹果需要知道我们的密码。</p>
+<p>首先，这个意味着苹果公司可以在很多网站上，比如说我们的邮件，使用我们的密码。好的吧，苹果公司的确也没有理由这么做。但是，那些情报部门呢？第二，这个同样意味着任何人，只要他会添加证书以及建立代理来监听通讯，那他就可以获取用户的AppleID和密码，然后就可以畅通无阻的访问他们的iCloud账号，数据备份，购买的应用。。。。</p>
+<p>以下是我们获得的一个例子：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST /WebObjects/VCProfileService.woa/wa/authenticateUser</span><br><span class="line">&apos;content-length&apos;: 223,</span><br><span class="line">&apos;accept-language&apos;: en-us,</span><br><span class="line">&apos;accept-encoding&apos;: gzip,</span><br><span class="line">&apos;content-encoding&apos;: gzip,</span><br><span class="line">&apos;host&apos;: service.ess.apple.com,</span><br><span class="line">&apos;accept&apos;: */*,</span><br><span class="line">&apos;user-agent&apos;: com.apple.invitation-registration [Mac OS X,10.8.3,12D78,Macmini4,1],</span><br><span class="line">&apos;connection&apos;: keep-alive,</span><br><span class="line">&apos;x-protocol-version&apos;: 7,</span><br><span class="line">&apos;content-type&apos;: application/x-apple-plist,</span><br><span class="line">&apos;x-ds-client-id&apos;: t:3A5DC02C47249FC50EF0FF1B8CF3073C9EBD0668</span><br></pre></td></tr></table></figure></p>
+<p>然后下面的是post的数据内容<br><figure class="highlight plain"><figcaption><span>xml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE plist PUBLIC &quot;-//Apple//DTD PLIST 1.0//EN&quot; &quot;http://www.apple.com/DTDs/PropertyList-1.0.dtd&quot;&gt;</span><br><span class="line">&lt;plist version=&quot;1.0&quot;&gt;</span><br><span class="line">&lt;dict&gt;</span><br><span class="line">    &lt;key&gt;password&lt;/key&gt;</span><br><span class="line">    &lt;string&gt;Icandoaproperkeynote&lt;/string&gt;</span><br><span class="line">    &lt;key&gt;username&lt;/key&gt;</span><br><span class="line">    &lt;string&gt;tim_c@icloud.com&lt;/string&gt;</span><br><span class="line">&lt;/dict&gt;</span><br><span class="line">&lt;/plist&gt;</span><br></pre></td></tr></table></figure></p>
+<p>在进行下一个话题前，我们再和证书玩一会。关于证书的问题，我们想到了iPhone Configuration Utility这个应用。这个应用是苹果公司为企业提供的管理iPhone的解决方案。在第一次运行这个应用的时候，当设备插入之后，CA就会添加到设备当中。MDM管理人员可以通过这个应用来轻松地纳入新的设备。</p>
+<p><img src="/images/post/iMessage_Privacy_1/cert_verified.png" alt="证书验证"></p>
+<p>为什么会有这个应用呢？这是因为对于那些由企业的IT部门管理的iPhone，他们希望能够创建一个代理，然后默默地监听iPhone发送出去的和接收到的所有通讯，然后就查看到可以非常隐私的信息。值得留意的是，不管是PUSH或者iMessage，证书绑定并不在任何特定的一层，因此任何地方都可能发生各种问题。</p>
+<h2 id="3-协议：客户端，PUSH-amp-ESS服务器"><a href="#3-协议：客户端，PUSH-amp-ESS服务器" class="headerlink" title="3. 协议：客户端，PUSH &amp; ESS服务器"></a>3. 协议：客户端，PUSH &amp; ESS服务器</h2><p>在这部分内容，我们将会描述一般的过程，包括所有相关的协议和加密步骤。</p>
+<h3 id="3-1-设备上的客户端"><a href="#3-1-设备上的客户端" class="headerlink" title="3.1 设备上的客户端"></a>3.1 设备上的客户端</h3><p>每一台设备都会有各自的证书，1024RSA和CN=<push guid> (显然，GUID需要用设备的GUID来代替)。客户端是MobileSMS/Message.app，但是客户端需要依赖于其他的服务。最主要的两项是：</push></p>
+<ul>
+<li>apsd:苹果公司的PUSH服务守护进程，负责从苹果公司的服务器获取消息，并下载到设备中。</li>
+<li>imagent:iMessage任务的后台进程，比如说当设备关闭的时候保持连接。</li>
+</ul>
+<p>苹果公司转发某条消息的过程，包括以下两个方面：</p>
+<ul>
+<li>给定一个目标地址（即URI，可以是电话号码或者邮件地址），苹果公司通过某种方法获得所有跟这个URI相关联的设备（包括iPhones，iPads或者OS X系统）。</li>
+<li>一旦苹果公司获得相关设备，苹果公司就可以将消息发送给这些设备。</li>
+</ul>
+<p>首先，让我们从第二个方面开始，也即传输协议（PUSH协议）。</p>
+<h3 id="3-2-PUSH协议"><a href="#3-2-PUSH协议" class="headerlink" title="3.2 PUSH协议"></a>3.2 PUSH协议</h3><p>当应用需要通知一个事件的时候，比如iMessage，Facetime，GameCenter和具有部分发送功能的应用，都会使用到PUSH协议，一个网络远程通知协议。在日常使用当中，你经常会收到Facebook，Whatsapp或者新闻类的应用发来的通知，告诉你一些刚刚才发生的事情。其实，所有的这些都是基于PUSH协议的。</p>
+<p>下面是苹果公司对PUSH协议的定义：</p>
+<blockquote>
+</blockquote>
+<p>Local and push notifications are great for keeping users informed with timely and relevant content, whether your app is running in the background or inactive. Notifications can display a message, play a distinctive sound, or update a badge on your app icon.</p>
+<blockquote>
+</blockquote>
+<p>（本地和推送通知都可以帮助用户获取及时相关的内容，不管你的应用是否是在后台运行或者已经被关闭。通知可以展示信息，发送特定的声音，或者更新你的应用图标上的标记。）</p>
+<p>PUSH协议作为一个传输协议，主要负责向一组设备发送payload（先不用管这是什么）。因此，在传输协议看来，iMessage本身其实就是一个payload。</p>
+<p>对于iMessage，所有的PUSH通信都在服务器端口5223的安全传输层协议上进行：</p>
+<ul>
+<li>Hostname由[0,…,255]-courier.push.apple.com组成</li>
+<li>客户端的证书，对于某个特定的设备（接下来会说到这点）</li>
+</ul>
+<h4 id="客户端证书"><a href="#客户端证书" class="headerlink" title="客户端证书"></a>客户端证书</h4><p>当一台设备在苹果公司上注册和激活后，都会生成PUSH协议证书。在第一次与苹果公司的服务器通信的时候，会向albert.apple.com服务器发送一个证书请求。这个服务器运行着证书授权服务，被称作Apple iPhone Device CA，负责签署每一个请求。</p>
+<p>这个证书信息是非常敏感的，因为设备发起的所有PUSH通信都是又它来负责：包括客户端和服务器端的身份验证，都是根据它来保证PUSH通信的安全性。</p>
+<p>正因为如此，所以这个证书并不会直接包含在iMessage中。虽然如此，因为iMessage在PUSH协议上运行，所以它还是可以发挥作用的。</p>
+<h4 id="PUSH密钥"><a href="#PUSH密钥" class="headerlink" title="PUSH密钥"></a>PUSH密钥</h4><p>从PUSH协议层的角度来说，关于它是如何工作的，还是一个只有苹果公司才知道的秘密。因此我们从客户端的角度来观察。通常，我们会先编写了一条消息，然后点击发送按钮。这样操作之后，客户端就会向苹果的ESS服务器请求发送这条消息所需要的信息。ESS服务器则会返回下面这三样信息：</p>
+<ul>
+<li>一个PUSH密钥，也即一对iDevice的唯一标记。</li>
+<li>两个加密的密钥</li>
+</ul>
+<p>PUSH密钥是在当设备在苹果服务器注册通讯服务的时候就会生成。因为它是在服务器端生成的，所以它的生成方法是不公开的，同样对于对于它真正的用途也是。目前来说，我们把它看作是供应商的登记和路由信息。</p>
+<p>由于实际上很多的苹果用户经常拥有多个苹果设备，一条iMessage消息需要发送到多台设备上，因此供应商需要将自己注册为iMessage供应商以及提供路由信息，以便让苹果公司知道该往哪里发送消息。</p>
+<p>因此客户端发送一条消息的时候，它其实是向所有拥有Push-Tokens的设备都发送了消息，以便这条消息能够发到所有的设备。这些消息通过端口5223的网关发送到苹果公司的网络推送服务（Apple Push Network Service）。</p>
+<p>比如说，在OS X系统，你可以看到：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">root@joker:~&gt;&gt; ps aux |grep apsd</span><br><span class="line">root 90 0.0 0.1 2467868 8052 ?? Ss Thu09AM 0:06.06 /System/Library/PrivateFrameworks/ApplePushService.framework/apsd</span><br><span class="line">root 20295 0.0 0.0 2432768 588 s003 S+ 3:08PM 0:00.00 grep apsd</span><br><span class="line"></span><br><span class="line">root@joker:~&gt;&gt; lsof -p 90 |grep TCP</span><br><span class="line">apsd 90 root 9u IPv4 0x667b30bc14a94f93 0t0 TCP joker.lan:65158-&gt;17.172.232.179:5223 (ESTABLISHED)</span><br><span class="line"></span><br><span class="line">root@joker:~&gt;&gt; whois 17.172.232.179</span><br><span class="line">NetRange:       17.0.0.0 - 17.255.255.255</span><br><span class="line">CIDR:           17.0.0.0/8</span><br><span class="line">OriginAS:</span><br><span class="line">NetName:        APPLE-WWNET</span><br><span class="line">NetHandle:      NET-17-0-0-0-1</span><br><span class="line">Parent:</span><br><span class="line">NetType:        Direct Assignment</span><br><span class="line">RegDate:        1990-04-16</span><br><span class="line">Updated:        2012-04-02</span><br><span class="line">Ref:            http://whois.arin.net/rest/net/NET-17-0-0-0-1</span><br><span class="line">OrgName:        Apple Inc.</span><br><span class="line">OrgId:          APPLEC-1-Z</span><br><span class="line">Address:        20400 Stevens Creek Blvd., City Center Bldg 3</span><br><span class="line">City:           Cupertino</span><br><span class="line">StateProv:      CA</span><br><span class="line">PostalCode:     95014</span><br><span class="line">Country:        US</span><br><span class="line">RegDate:        2009-12-14</span><br><span class="line">Updated:        2011-03-08</span><br><span class="line">Ref:            http://whois.arin.net/rest/org/APPLEC-1-Z</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<p>当APNS服务器接收到这些信息后，PUSH协议就开始发挥作用。虽然这方面的信息没有在文档中说明，但是我们可以根据<a href="#refer6" id="id6">[6]</a>来猜测，苹果公司主要是依赖于APNS和设备间的连接。根据每一条消息中的Push密钥，苹果公司能够知道哪台设备应该接收这条消息。</p>
+<h4 id="PUSH协议层上的MITM"><a href="#PUSH协议层上的MITM" class="headerlink" title="PUSH协议层上的MITM"></a>PUSH协议层上的MITM</h4><p>怎么攻击PUSH协议层呢？攻击它，意味着在客户端和苹果服务器之间来监听消息。但是，因为通信是在TLS协议上的，所以需要花费一些精力来提供证书。</p>
+<p>有一个非常方便的工具，叫做PushProxy。这个工具提供了一些简单的API来处理接受的和发送的消息。因为在要在真实的通信中进行监听需要很多事先的准备，为了简化，我们目前只在本地的设备上进行演示。</p>
+<p>首先，我们需要在系统的keychain中添加一个root CA，让代理的证书被信任。通过这种方法，客户端就会相信代理发送过去的信息。这很简单，但是我们还是得需要跟苹果的服务器进行通信。正如我们之前说的，验证是双向的，所以我们需要网albert.apple.com插入一个新的证书，或者用一个已经签名的证书。</p>
+<p>我们选择了第二个选项：我们从设备的PUSH证书中抽取部分私有信息，然后加到代理中。最后，我们需要修改设备的/etc/hosts文件，来重定向所有的通信到代理上。</p>
+<p>现在，我们就可以看到有什么包含在PUSH消息中了。一个iMessage payload的PUSH协议层，跟下面的相类似（XX字节没有设置，因为它们依赖于消息的内容）：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0a                    &gt;&gt; Message Type</span><br><span class="line">XX XX XX XX           &gt;&gt; Next Length</span><br><span class="line">04 00 04 XX XX XX XX  &gt;&gt; Identifier (4 bytes)</span><br><span class="line">01 00 14 XX .. .. XX  &gt;&gt; Topic Hash (20 bytes)</span><br><span class="line">02 00 20 XX .. .. XX  &gt;&gt; Push-Token (32 bytes)</span><br><span class="line">03 XX XX ...          &gt;&gt; iMessage payload</span><br></pre></td></tr></table></figure></p>
+<p>在我们深入了解iMessage的payload之前，我们需要先了解下iMessage ID。</p>
+<h3 id="3-3-iMessage-ID"><a href="#3-3-iMessage-ID" class="headerlink" title="3.3 iMessage ID"></a>3.3 iMessage ID</h3><p>往下，为了简单点，我们把iMessage称为IM。在IM层，包含了很多信息，其中包括：</p>
+<ul>
+<li>AppleID: 正如之前所说，苹果账号的核心内容。</li>
+<li>URI: 跟AppleID的格式一样，是一个邮件地址或者电话号码。一个AppleID可以对应多个URI。当它是邮箱地址的时候，需要通过点击一个连接来验证。当它是电话号码的时候，就只能通过SIM卡来验证。</li>
+<li>Push-Token: 之前已经介绍过，是iMessage用来确定每个URI所注册的设备。因此，每台设备上的URI都是对应一个唯一的Push-Token。</li>
+</ul>
+<h3 id="3-4-发送一条iMessage"><a href="#3-4-发送一条iMessage" class="headerlink" title="3.4 发送一条iMessage"></a>3.4 发送一条iMessage</h3><p>当一个用户想要发送一条iMessage，他首先需要提供一个或者多个目标URI。因为通讯是端对端地加密，所以通讯的设备相互之间直接交换所需的密钥，或者某个地方存放着一个密钥目录。</p>
+<p>实际上，的确是有这么一个密钥目录，叫做ESS服务器（我们也不知道为啥叫做ESS，问苹果公司吧）。为了获得密钥，iDevice会向服务器发送这么一条请求：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET /WebObjects/QueryService.woa/wa/query?uri=tel:+33123456789</span><br><span class="line">&apos;Host&apos;: service1.ess.apple.com</span><br><span class="line">&apos;Content-Type&apos;: application/x-apple-plist</span><br><span class="line">&apos;x-id-cert&apos;: [Provision Certificate]</span><br><span class="line">&apos;x-id-nonce&apos;: [Random Nonce with Timestamp]</span><br><span class="line">&apos;x-id-sig&apos;: [Query Signed with Provision Cert.]</span><br></pre></td></tr></table></figure></p>
+<p>在这个例子中，这台iDevice想要获得URI为“+33123456789”的密钥。</p>
+<p>我们需要注意的是，这个请求是用另外的一份证书来签名的，这份证书叫做Provision。这份证书是在客户端中生成的，在iMessage验证过程中，由一个叫做Apple IDS DS-ID Realm CA的授权来签名的。它的有效期只有一个月。</p>
+<p>服务器返回的响应跟下面的相似：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &apos;push-token&apos;: [PushToken]</span><br><span class="line">  &apos;client-data&apos;:</span><br><span class="line">  &#123;</span><br><span class="line">    &apos;show-peer-errors&apos;: True,</span><br><span class="line">    &apos;public-message-identity-version&apos;: 1.0,</span><br><span class="line">    &apos;public-message-identity-key&apos;: [Public Keys Buffer]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实际上，这是一个XML plist。我们将它转化成JSON格式，好让它更好理解。在我们的例子中，只返回了一个身份标记。要是目标URI对应了多台设备和多个注册的账号，则会返回他们每一个对应的身份标记。</p>
+<p>除了包含了Push-Token，服务器返回的响应中还包含了一堆公开的密钥：</p>
+<ul>
+<li>一个ECDSA（256-bit），用来验证目标URI发送过来的消息的签名。</li>
+<li>一个RSA（1280-bit），用来加密发送给目标URI的iMessage。</li>
+</ul>
+<p>通过这些密钥，我们就可以跟目标URI对应的设备建立一个安全的（真的？）通讯。</p>
+<h3 id="3-5-iMessage-Payload"><a href="#3-5-iMessage-Payload" class="headerlink" title="3.5 iMessage Payload"></a>3.5 iMessage Payload</h3><p>在结束对PUSH协议的介绍之前，我们先来看看什么是iMessage payload。现在，我们就来看看payload是由什么组成的。</p>
+<p>payload的格式是由苹果公司来规定的，称为bplist（binary-plist），将序列化的数据组装成一个字典。它定义了多种类型的数据，包括常见的那些类型：NSString，NSNumber，NSDate，NSArray，NSData，NSDictionary。</p>
+<p>下面是bplist的一个例子：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">D:   True</span><br><span class="line">E:   &apos;pair&apos;</span><br><span class="line">P:   &lt;variable length binary data&gt; (iMessage payload, deflate compressed)</span><br><span class="line">U:   &lt;128bit binary data&gt; (iMessage UID)</span><br><span class="line">c:   100</span><br><span class="line">i:   &lt;32bit integer&gt; (messageId, same as in PUSH header)</span><br><span class="line">sP:  mailto:tim_c@icloud.com  (sender URI)</span><br><span class="line">t:   &lt;256bit binary data&gt; (sender Push-Token)</span><br><span class="line">tP:  mailto:mark_z@facebook.com (receiver URI)</span><br><span class="line">ua:  [Mac OS X,10.8.5,12F37,MacBookPro10,2] (sender OS and hardware version)</span><br><span class="line">v:   1</span><br></pre></td></tr></table></figure></p>
+<p>其中，ua字段基本上是没有什么用处的，但是却会包含在每一个请求中。难道是苹果公司为了统计吗？</p>
+<p>不管怎样，P字段就是IM payload。它在压缩的时候就被加密了（先加密，然后在压缩）。它是由下面这些关键字组成：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(byte)     0x02          version?</span><br><span class="line">(short)    ciphertext    length</span><br><span class="line">(data)     ciphertext    RSA / AES-CTR data : ciphered with the RSA public key of the recipient</span><br><span class="line">(byte)     signature     length</span><br><span class="line">(data)     signature     ECDSA signature of &lt;ciphertext&gt; : computed with the ECDSA private key of the emitter</span><br></pre></td></tr></table></figure></p>
+<p>在明文中，这个数据也是bplist，我们姑且把它称作inner bplist：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">p: array of URIs in the discussion group</span><br><span class="line">t: iMessage text (for iOS)</span><br><span class="line">v: version (1)</span><br><span class="line">x: iMessage html (attachments, and style - for OS X)</span><br></pre></td></tr></table></figure><br>这个数据是真正发送给目标的信息（URI，信息，附件）。我们来看一下，它创建的步骤：</p>
+<ol>
+<li>生成一个16字节的随机字符，作为AES key。</li>
+<li>在CTR模式下，用AES来加密那些明文数据，加密后的数据称为AES(ibplist)。</li>
+<li>然后在输出流的开头加上一个128-bit的密钥<br><img src="/images/post/iMessage_Privacy_1/aes2.png" alt="aes2"></li>
+<li>这个由128-bit的密钥和808-bit的AES(ibplist)，使用65537公开指数和PKCS1 OAEP填充，与RSA-1280进行加密。组成1280-bit的输出流。<br><img src="/images/post/iMessage_Privacy_1/aes1.png" alt="aes1"></li>
+<li>最后用ECDSA密钥来签名。</li>
+</ol>
+<p>这里所使用的RSA密钥是从ESS服务器那里获得的。</p>
+<h4 id="发送带附件的iMessage"><a href="#发送带附件的iMessage" class="headerlink" title="发送带附件的iMessage"></a>发送带附件的iMessage</h4><p>跟大多数的即时通讯服务一样，iMessage提供了发送带附件的消息。虽然通常人们都只是用他们的iPhone发送图片，但其实iMessage支持任何格式的文件。</p>
+<p>发送一个附件的时候，这个附件其实是保存在iCloud服务器上的一个专用资料库中。这个附件用AES来加密，而加密的密钥，与文件的链接一起，包含在iMessage的payload中发送给目标地址。因为消息用目标的RSA密钥来加密，所以附件加密的密钥同样被加密了。</p>
+<p>这些都是包含在HTML消息中的<file>字段：<br><figure class="highlight plain"><figcaption><span>shell</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;file</span><br><span class="line">   name=&quot;&lt;name&gt;&quot;</span><br><span class="line">   width=&quot;&lt;width&gt;&quot;</span><br><span class="line">   height=&quot;&lt;height&gt;&quot;</span><br><span class="line">   datasize=&quot;&lt;size&gt;&quot;</span><br><span class="line">   mime-type=&quot;&lt;mime type&gt;&quot;</span><br><span class="line">   uti-type=&quot;&lt;uti type&gt;&quot;</span><br><span class="line">   mmcs-owner=&quot;&lt;identifier&gt;&quot;</span><br><span class="line">   mmcs-url=&quot;&lt;URL&gt;&quot;</span><br><span class="line">   mmcs-signature-hex=&quot;&lt;signature&gt;&quot;</span><br><span class="line">   file-size=&quot;&lt;size&gt;&quot;</span><br><span class="line">   decryption-key=&quot;&lt;key&gt;&quot;</span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure></file></p>
+<p>未完待续<del>~</del></p>
+<h2 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h2><p><a href="#id1" id="refer1">[1]</a><br><a href="http://www.wired.co.uk/news/archive/2013-07/11/blackberry-inda" target="_blank" rel="noopener">http://www.wired.co.uk/news/archive/2013-07/11/blackberry-inda</a></p>
+<p><a href="#id2" id="refer2">[2]</a><br><a href="http://www.washingtonpost.com/business/economy/skype-makes-chats-and-user-data-more-available-to-police/2012/07/25/gJQAobI39W_story.html" target="_blank" rel="noopener">http://www.washingtonpost.com/business/economy/skype-makes-chats-and-user-data-more-available-to-police/2012/07/25/gJQAobI39W_story.html</a></p>
+<p><a href="#id3" id="refer3">[3]</a><br><a href="https://www.apple.com/apples-commitment-to-customer-privacy/" target="_blank" rel="noopener">https://www.apple.com/apples-commitment-to-customer-privacy/</a></p>
+<p><a href="#id4" id="refer4">[4]</a><br>Man-in-the-Middle Attack，中间人攻击，通过窃取或窜改两方通信内容间接完成攻击行为的网络攻击方法。这种攻击模式通过各种攻击手段入侵控制或者直接以物理接入方式操控两台通信计算机之间的主机并通过这台主机达到攻击两台通信计算机中任意一方的目的。详情请查看<a href="http://www.h3c.com.cn/About_H3C/Company_Publication/IP_Lh/2012/05/Home/Catalog/201211/758700_30008_0.htm" target="_blank" rel="noopener">MITM攻击简介</a></p>
+<p><a href="#id5" id="refer5">[5]</a><br><a href="https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning" target="_blank" rel="noopener">https://www.owasp.org/index.php/Certificate_and_Public_Key_Pinning</a></p>
+<p><a href="#id6" id="refer6">[6]</a><br><a href="https://github.com/meeee/pushproxy" target="_blank" rel="noopener">https://github.com/meeee/pushproxy</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2013/11/03/setting-up-your-custom-domain-with-octopress-and-github/" rel="next" title="Setting up your custom domain with octopress and github">
+                <i class="fa fa-chevron-left"></i> Setting up your custom domain with octopress and github
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2013/12/07/imessage-privacy-2/" rel="prev" title="iMessage Privacy (2)">
+                iMessage Privacy (2) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#演示文稿"><span class="nav-number">1.</span> <span class="nav-text">演示文稿</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#快速的回答"><span class="nav-number">2.</span> <span class="nav-text">快速的回答</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#即时通讯的监听"><span class="nav-number">3.</span> <span class="nav-text">即时通讯的监听</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缺少证书锁定：那又如何？"><span class="nav-number">4.</span> <span class="nav-text">缺少证书锁定：那又如何？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-协议：客户端，PUSH-amp-ESS服务器"><span class="nav-number">5.</span> <span class="nav-text">3. 协议：客户端，PUSH &amp; ESS服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-设备上的客户端"><span class="nav-number">5.1.</span> <span class="nav-text">3.1 设备上的客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-PUSH协议"><span class="nav-number">5.2.</span> <span class="nav-text">3.2 PUSH协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端证书"><span class="nav-number">5.2.1.</span> <span class="nav-text">客户端证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PUSH密钥"><span class="nav-number">5.2.2.</span> <span class="nav-text">PUSH密钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PUSH协议层上的MITM"><span class="nav-number">5.2.3.</span> <span class="nav-text">PUSH协议层上的MITM</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-iMessage-ID"><span class="nav-number">5.3.</span> <span class="nav-text">3.3 iMessage ID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-发送一条iMessage"><span class="nav-number">5.4.</span> <span class="nav-text">3.4 发送一条iMessage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-iMessage-Payload"><span class="nav-number">5.5.</span> <span class="nav-text">3.5 iMessage Payload</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#发送带附件的iMessage"><span class="nav-number">5.5.1.</span> <span class="nav-text">发送带附件的iMessage</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引用"><span class="nav-number">6.</span> <span class="nav-text">引用</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

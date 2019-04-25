@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="这篇博文是Java Concurrency系列博文的第三篇，主要来探索Java中多线程常用到的一些集合类，包括ConcurrentHashMap和BlockingQueue。通过对部分源代码的分析，希望能够帮助理解这些集合类的机制和特点，以便把握他们的正确使用场景。 ConcurrentHashMapPS：部分内容参考了Java并发编程之ConcurrentHashMap ConcurrentHa">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java Concurrency - Collection">
+<meta property="og:url" content="https://yang2012.github.io/2014/06/20/java-concurrency-collection/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="这篇博文是Java Concurrency系列博文的第三篇，主要来探索Java中多线程常用到的一些集合类，包括ConcurrentHashMap和BlockingQueue。通过对部分源代码的分析，希望能够帮助理解这些集合类的机制和特点，以便把握他们的正确使用场景。 ConcurrentHashMapPS：部分内容参考了Java并发编程之ConcurrentHashMap ConcurrentHa">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/java_concurrency_collection/concurrentHashMap.png">
+<meta property="og:updated_time" content="2019-04-23T10:27:04.242Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java Concurrency - Collection">
+<meta name="twitter:description" content="这篇博文是Java Concurrency系列博文的第三篇，主要来探索Java中多线程常用到的一些集合类，包括ConcurrentHashMap和BlockingQueue。通过对部分源代码的分析，希望能够帮助理解这些集合类的机制和特点，以便把握他们的正确使用场景。 ConcurrentHashMapPS：部分内容参考了Java并发编程之ConcurrentHashMap ConcurrentHa">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/java_concurrency_collection/concurrentHashMap.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2014/06/20/java-concurrency-collection/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java Concurrency - Collection | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2014/06/20/java-concurrency-collection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java Concurrency - Collection
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2014-06-20 00:00:00" itemprop="dateCreated datePublished" datetime="2014-06-20T00:00:00+08:00">2014-06-20</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>这篇博文是Java Concurrency系列博文的第三篇，主要来探索Java中多线程常用到的一些集合类，包括ConcurrentHashMap和BlockingQueue。通过对部分源代码的分析，希望能够帮助理解这些集合类的机制和特点，以便把握他们的正确使用场景。</p>
+<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p><em>PS：部分内容参考了<a href="http://www.iteye.com/topic/1103980" target="_blank" rel="noopener">Java并发编程之ConcurrentHashMap</a></em></p>
+<p><code>ConcurrentHashMap</code>是一个线程安全的Hash Table，它的主要功能是提供了一组和HashTable功能相同但是线程安全的方法。<code>ConcurrentHashMap</code>可以做到读取数据不加锁，并且其内部的结构可以让其在进行写操作的时候能够将锁的粒度保持地尽量地小，不用对整个<code>ConcurrentHashMap</code>加锁。</p>
+<p><code>ConcurrentHashMap</code>为了提高本身的并发能力，在内部采用了一个叫做<code>Segment</code>的结构，一个<code>Segment</code>其实就是一个类Hash Table的结构，Segment内部维护了一个链表数组，我们用下面这一幅图来看下<code>ConcurrentHashMap</code>的内部结构：</p>
+<a id="more"></a>
+<p><img src="/images/post/java_concurrency_collection/concurrentHashMap.png" alt="ConcurrentHashMap"></p>
+<p>从上面的结构我们可以了解到，<code>ConcurrentHashMap</code>定位一个元素的过程需要进行两次Hash操作，第一次Hash定位到<code>Segment</code>，第二次Hash定位到元素所在的链表的头部，因此，这一种结构的带来的副作用是Hash的过程要比普通的HashMap要长，但是带来的好处是写操作的时候可以只对元素所在的<code>Segment</code>进行加锁即可，不会影响到其他的Segment，这样，在最理想的情况下，<code>ConcurrentHashMap</code>可以最高同时支持<code>Segment</code>数量大小的写操作（刚好这些写操作都非常平均地分布在所有的<code>Segment</code>上），所以，通过这一种结构，<code>ConcurrentHashMap</code>的并发能力可以大大的提高。</p>
+<p><strong>Segment</strong></p>
+<p>我们再来具体了解一下<code>Segment</code>的数据结构：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static final class Segment&lt;K,V&gt; extends ReentrantLock implements Serializable &#123;  </span><br><span class="line">    transient volatile int count;  </span><br><span class="line">    transient int modCount;  </span><br><span class="line">    transient int threshold;  </span><br><span class="line">    transient volatile HashEntry&lt;K,V&gt;[] table;  </span><br><span class="line">    final float loadFactor;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>详细解释一下<code>Segment</code>里面的成员变量的意义：</p>
+<ul>
+<li>count：Segment中元素的数量</li>
+<li>modCount：对table的大小造成影响的操作的数量（比如put或者remove操作）</li>
+<li>threshold：阈值，Segment里面元素的数量超过这个值依旧就会对Segment进行扩容</li>
+<li>table：链表数组，数组中的每一个元素代表了一个链表的头部</li>
+<li>loadFactor：负载因子，用于确定threshold</li>
+</ul>
+<p><strong>HashEntry</strong></p>
+<p><code>Segment</code>中的元素是以<code>HashEntry</code>的形式存放在链表数组中的，看一下<code>HashEntry</code>的结构：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">static final class HashEntry&lt;K,V&gt; &#123;  </span><br><span class="line">    final K key;  </span><br><span class="line">    final int hash;  </span><br><span class="line">    volatile V value;  </span><br><span class="line">    final HashEntry&lt;K,V&gt; next;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>可以看到<code>HashEntry</code>的一个特点，除了<code>value</code>以外，其他的几个变量都是<code>final</code>的，这样做是为了防止链表结构被破坏，出现<code>ConcurrentModification</code>的情况。</p>
+<p>下面我们来结合源代码来具体分析一下ConcurrentHashMap的实现，先看下初始化方法：</p>
+<p><strong>ConcurrentHashMap的初始化</strong></p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public ConcurrentHashMap(int initialCapacity,</span><br><span class="line">                         float loadFactor, int concurrencyLevel) &#123;</span><br><span class="line">    if (!(loadFactor &gt; 0) || initialCapacity &lt; 0 || concurrencyLevel &lt;= 0)</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line"> </span><br><span class="line">    if (concurrencyLevel &gt; MAX_SEGMENTS)</span><br><span class="line">        concurrencyLevel = MAX_SEGMENTS;</span><br><span class="line"> </span><br><span class="line">    // Find power-of-two sizes best matching arguments</span><br><span class="line">    int sshift = 0;</span><br><span class="line">    int ssize = 1;</span><br><span class="line">    while (ssize &lt; concurrencyLevel) &#123;</span><br><span class="line">        ++sshift;</span><br><span class="line">        ssize &lt;&lt;= 1;</span><br><span class="line">    &#125;</span><br><span class="line">    segmentShift = 32 - sshift;</span><br><span class="line">    segmentMask = ssize - 1;</span><br><span class="line">    this.segments = Segment.newArray(ssize);</span><br><span class="line"> </span><br><span class="line">    if (initialCapacity &gt; MAXIMUM_CAPACITY)</span><br><span class="line">        initialCapacity = MAXIMUM_CAPACITY;</span><br><span class="line">    int c = initialCapacity / ssize;</span><br><span class="line">    if (c * ssize &lt; initialCapacity)</span><br><span class="line">        ++c;</span><br><span class="line">    int cap = 1;</span><br><span class="line">    while (cap &lt; c)</span><br><span class="line">        cap &lt;&lt;= 1;</span><br><span class="line"> </span><br><span class="line">    for (int i = 0; i &lt; this.segments.length; ++i)</span><br><span class="line">        this.segments[i] = new Segment&lt;K,V&gt;(cap, loadFactor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CurrentHashMap</code>的初始化一共有三个参数，一个<code>initialCapacity</code>，表示初始的容量，一个<code>loadFactor</code>，表示负载参数，最后一个是<code>concurrentLevel</code>，代表<code>ConcurrentHashMap</code>内部的<code>Segment</code>的数量，<code>ConcurrentLevel</code>一经指定，不可改变，后续如果ConcurrentHashMap的元素数量增加导致<code>ConrruentHashMap</code>需要扩容，<code>ConcurrentHashMap</code>不会增加<code>Segment</code>的数量，而只会增加<code>Segment</code>中链表数组的容量大小，这样的好处是扩容过程不需要对整个<code>ConcurrentHashMap</code>做<code>rehash</code>，而只需要对<code>Segment</code>里面的元素做一次<code>rehash</code>就可以了。</p>
+<p>整个<code>ConcurrentHashMap</code>的初始化方法还是非常简单的，先是根据<code>concurrentLevel</code>来<code>new</code>出<code>Segment</code>，这里<code>Segment</code>的数量是不大于<code>concurrentLevel</code>的最大的2的指数，就是说<code>Segment</code>的数量永远是2的指数个，这样的好处是方便采用移位操作来进行hash，加快hash的过程。接下来就是根据<code>intialCapacity</code>确定<code>Segment</code>的容量的大小，每一个Segment的容量大小也是2的指数，同样使为了加快hash的过程。</p>
+<p>这边需要特别注意一下两个变量，分别是<code>segmentShift</code>和<code>segmentMask</code>，这两个变量在后面将会起到很大的作用，假设构造函数确定了<code>Segment</code>的数量是2的n次方，那么<code>segmentShift</code>就等于32减去n，而<code>segmentMask</code>就等于2的n次方减一。</p>
+<p><strong>ConcurrentHashMap的get操作</strong></p>
+<p>前面提到过<code>ConcurrentHashMap</code>的<code>get</code>操作是不用加锁的，我们这里看一下其实现：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public V get(Object key) &#123;  </span><br><span class="line">    int hash = hash(key.hashCode());  </span><br><span class="line">    return segmentFor(hash).get(key, hash);  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>在第三行，<code>segmentFor</code>这个函数用于确定操作应该在哪一个<code>segment</code>中进行，几乎对<code>ConcurrentHashMap</code>的所有操作都需要用到这个函数，我们看下这个函数的实现：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">final Segment&lt;K,V&gt; segmentFor(int hash) &#123;  </span><br><span class="line">    return segments[(hash &gt;&gt;&gt; segmentShift) &amp; segmentMask];  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个函数用了位操作来确定<code>Segment</code>，根据传入的hash值向右无符号右移<code>segmentShift</code>位，然后和<code>segmentMask</code>进行与操作，结合我们之前说的<code>segmentShift</code>和<code>segmentMask</code>的值，就可以得出以下结论：假设<code>Segment</code>的数量是2的n次方，根据元素的hash值的高n位就可以确定元素到底在哪一个<code>Segment</code>中。</p>
+<p>在确定了需要在哪一个<code>Segment</code>中进行操作以后，接下来的事情就是调用对应的<code>Segment</code>的<code>get</code>方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">V get(Object key, int hash) &#123;</span><br><span class="line">    if (count != 0) &#123; // read-volatile</span><br><span class="line">        HashEntry&lt;K,V&gt; e = getFirst(hash);</span><br><span class="line">        while (e != null) &#123;</span><br><span class="line">            if (e.hash == hash &amp;&amp; key.equals(e.key)) &#123;</span><br><span class="line">                V v = e.value;</span><br><span class="line">                if (v != null)</span><br><span class="line">                    return v;</span><br><span class="line">                return readValueUnderLock(e); // recheck</span><br><span class="line">            &#125;</span><br><span class="line">            e = e.next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>先看第二行代码，这里对<code>count</code>进行了一次判断，其中<code>count</code>表示<code>Segment</code>中元素的数量，我们可以来看一下<code>count</code>的定义：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transient volatile int count;  </span><br></pre></td></tr></table></figure>
+<p>可以看到<code>count</code>是<code>volatile</code>的。因为实际上<code>put</code>、<code>remove</code>等操作也会更新<code>count</code>的值，所以当竞争发生的时候，<code>volatile</code>的语义可以保证写操作在读操作之前，也就保证了写操作对后续的读操作都是可见的，这样后面get的后续操作就可以拿到完整的元素内容。</p>
+<p>然后，在第三行，调用了<code>getFirst</code>方法来取得链表的头部：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HashEntry&lt;K,V&gt; getFirst(int hash) &#123;  </span><br><span class="line">    HashEntry&lt;K,V&gt;[] tab = table;  </span><br><span class="line">    return tab[hash &amp; (tab.length - 1)];  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>同样，这里也是用位操作来确定链表的头部，hash值和HashTable的长度减一做与操作，最后的结果就是hash值的低n位，其中n是HashTable的长度以2为底的结果。</p>
+<p>在确定了链表的头部以后，就可以对整个链表进行遍历，看第4行，取出key对应的value的值，如果拿出的value的值是null，则可能这个key，value对正在put的过程中，如果出现这种情况，那么就加锁来保证取出的value是完整的，如果不是null，则直接返回value。</p>
+<p><strong>ConcurrentHashMap的put操作</strong></p>
+<p>看完了<code>get</code>操作，再看下<code>put</code>操作，<code>put</code>操作的前面也是确定<code>Segment</code>的过程，这里不再赘述，直接看关键的<code>Segment</code>的<code>put</code>方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"> V put(K key, int hash, V value, boolean onlyIfAbsent) &#123;  </span><br><span class="line">    lock();  </span><br><span class="line">    try &#123;  </span><br><span class="line">        int c = count;  </span><br><span class="line">        if (c++ &gt; threshold) // ensure capacity  </span><br><span class="line">            rehash();  </span><br><span class="line">        HashEntry&lt;K,V&gt;[] tab = table;  </span><br><span class="line">        int index = hash &amp; (tab.length - 1);  </span><br><span class="line">        HashEntry&lt;K,V&gt; first = tab[index];  </span><br><span class="line">        HashEntry&lt;K,V&gt; e = first;  </span><br><span class="line">        while (e != null &amp;&amp; (e.hash != hash || !key.equals(e.key)))  </span><br><span class="line">            e = e.next;  </span><br><span class="line">   </span><br><span class="line">        V oldValue;  </span><br><span class="line">        if (e != null) &#123;  </span><br><span class="line">            oldValue = e.value;  </span><br><span class="line">            if (!onlyIfAbsent)  </span><br><span class="line">                e.value = value;  </span><br><span class="line">        &#125;  </span><br><span class="line">        else &#123;  </span><br><span class="line">            oldValue = null;  </span><br><span class="line">            ++modCount;  </span><br><span class="line">            tab[index] = new HashEntry&lt;K,V&gt;(key, hash, first, value);  </span><br><span class="line">            count = c; // write-volatile  </span><br><span class="line">        &#125;  </span><br><span class="line">        return oldValue;  </span><br><span class="line">    &#125; finally &#123;  </span><br><span class="line">        unlock();  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+<p>首先对<code>Segment</code>的<code>put</code>操作是加锁完成的，然后在第五行，如果<code>Segment</code>中元素的数量超过了阈值（由构造函数中的<code>loadFactor</code>算出）这需要进行对<code>Segment</code>扩容，并且要进行<code>rehash</code>，关于<code>rehash</code>的过程大家可以自己去了解，这里不详细讲了。</p>
+<p>第8和第9行的操作就是<code>getFirst</code>的过程，确定链表头部的位置。</p>
+<p>第11行这里的这个<code>while</code>循环是在链表中寻找和要<code>put</code>的元素相同<code>key</code>的元素，如果找到，就直接更新更新<code>key</code>的<code>value</code>，如果没有找到，则进入21行这里，生成一个新的<code>HashEntry</code>并且把它加到整个<code>Segment</code>的头部，然后再更新<code>count</code>的值。</p>
+<p><strong>ConcurrentHashMap的remove操作</strong></p>
+<p><code>Remove</code>操作的前面一部分和前面的<code>get</code>和<code>put</code>操作一样，都是定位<code>Segment</code>的过程，然后再调用<code>Segment</code>的<code>remove</code>方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">V remove(Object key, int hash, Object value) &#123;</span><br><span class="line">    lock();</span><br><span class="line">    try &#123;</span><br><span class="line">        int c = count - 1;</span><br><span class="line">        HashEntry&lt;K,V&gt;[] tab = table;</span><br><span class="line">        int index = hash &amp; (tab.length - 1);</span><br><span class="line">        HashEntry&lt;K,V&gt; first = tab[index];</span><br><span class="line">        HashEntry&lt;K,V&gt; e = first;</span><br><span class="line">        while (e != null &amp;&amp; (e.hash != hash || !key.equals(e.key)))</span><br><span class="line">            e = e.next;</span><br><span class="line"> </span><br><span class="line">        V oldValue = null;</span><br><span class="line">        if (e != null) &#123;</span><br><span class="line">            V v = e.value;</span><br><span class="line">            if (value == null || value.equals(v)) &#123;</span><br><span class="line">                oldValue = v;</span><br><span class="line">                // All entries following removed node can stay</span><br><span class="line">                // in list, but all preceding ones need to be</span><br><span class="line">                // cloned.</span><br><span class="line">                ++modCount;</span><br><span class="line">                HashEntry&lt;K,V&gt; newFirst = e.next;</span><br><span class="line">                for (HashEntry&lt;K,V&gt; p = first; p != e; p = p.next)</span><br><span class="line">                    newFirst = new HashEntry&lt;K,V&gt;(p.key, p.hash,</span><br><span class="line">                                                  newFirst, p.value);</span><br><span class="line">                tab[index] = newFirst;</span><br><span class="line">                count = c; // write-volatile</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return oldValue;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先<code>remove</code>操作也是确定需要删除的元素的位置，不过这里删除元素的方法不是简单地把待删除元素的前面的一个元素的<code>next</code>指向后面一个就完事了，我们之前已经说过<code>HashEntry</code>中的<code>next</code>是<code>final</code>的，一经赋值以后就不可修改，在定位到待删除元素的位置以后，程序就将待删除元素前面的那一些元素全部复制一遍，然后再一个一个重新接到链表上去</p>
+<p><strong>ConcurrentHashMap的size操作</strong></p>
+<p>在前面的章节中，我们涉及到的操作都是在单个<code>Segment</code>中进行的，但是<code>ConcurrentHashMap</code>有一些操作是在多个<code>Segment</code>中进行，比如<code>size</code>操作，<code>ConcurrentHashMap</code>的<code>size</code>操作也采用了一种比较巧的方式，来尽量避免对所有的<code>Segment</code>都加锁。</p>
+<p>前面我们提到了一个<code>Segment</code>中的有一个<code>modCount</code>变量，代表的是对Segment中元素的数量造成影响的操作的次数，这个值只增不减，size操作就是遍历了两次<code>Segment</code>，每次记录<code>Segment的modCount</code>值，然后将两次的<code>modCount</code>进行比较，如果相同，则表示期间没有发生过写入操作，就将原先遍历的结果返回，如果不相同，则把这个过程再重复做一次，如果再不相同，则就需要将所有的<code>Segment</code>都锁住，然后一个一个遍历了，具体的实现大家可以看<code>ConcurrentHashMap</code>的源码。</p>
+<p>下面是<code>size</code>方法的具体实现，我们就不在一一分析，感兴趣的读者可以自己分析一下：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">public int size() &#123;</span><br><span class="line">    // Try a few times to get accurate count. On failure due to</span><br><span class="line">    // continuous async changes in table, resort to locking.</span><br><span class="line">    final Segment&lt;K,V&gt;[] segments = this.segments;</span><br><span class="line">    int size;</span><br><span class="line">    boolean overflow; // true if size overflows 32 bits</span><br><span class="line">    long sum;         // sum of modCounts</span><br><span class="line">    long last = 0L;   // previous sum</span><br><span class="line">    int retries = -1; // first iteration isn&apos;t retry</span><br><span class="line">    try &#123;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            if (retries++ == RETRIES_BEFORE_LOCK) &#123;</span><br><span class="line">                for (int j = 0; j &lt; segments.length; ++j)</span><br><span class="line">                    ensureSegment(j).lock(); // force creation</span><br><span class="line">            &#125;</span><br><span class="line">            sum = 0L;</span><br><span class="line">            size = 0;</span><br><span class="line">            overflow = false;</span><br><span class="line">            for (int j = 0; j &lt; segments.length; ++j) &#123;</span><br><span class="line">                Segment&lt;K,V&gt; seg = segmentAt(segments, j);</span><br><span class="line">                if (seg != null) &#123;</span><br><span class="line">                    sum += seg.modCount;</span><br><span class="line">                    int c = seg.count;</span><br><span class="line">                    if (c &lt; 0 || (size += c) &lt; 0)</span><br><span class="line">                        overflow = true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            if (sum == last)</span><br><span class="line">                break;</span><br><span class="line">            last = sum;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (retries &gt; RETRIES_BEFORE_LOCK) &#123;</span><br><span class="line">            for (int j = 0; j &lt; segments.length; ++j)</span><br><span class="line">                segmentAt(segments, j).unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return overflow ? Integer.MAX_VALUE : size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h2><p>多线程环境中，通过队列可以很容易实现数据共享，比如经典的“生产者”和“消费者”模型中，通过队列可以很便利地实现两者之间的数据共享。假设我们有若干生产者线程，另外又有若干个消费者线程。如果生产者线程需要把准备好的数据共享给消费者线程，利用队列的方式来传递数据，就可以很方便地解决他们之间的数据共享问题。但如果生产者和消费者在某个时间段内，万一发生数据处理速度不匹配的情况呢？理想情况下，如果生产者产出数据的速度大于消费者消费的速度，并且当生产出来的数据累积到一定程度的时候，那么生产者必须暂停等待一下（阻塞生产者线程），以便等待消费者线程把累积的数据处理完毕，反之亦然。</p>
+<p>适用阻塞队列的好处：多线程操作共同的队列时不需要额外的同步，另外就是队列会自动平衡负载，即那边（生产与消费两边）处理快了就会被阻塞掉，从而减少两边的处理速度差距。当队列中没有数据的情况下，消费者端的所有线程都会被自动阻塞（挂起），直到有数据放入队列。当队列中填满数据的情况下，生产者端的所有线程都会被自动阻塞（挂起），直到队列中有空的位置，线程被自动唤醒。</p>
+<p><code>BlockingQueue</code>的核心方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">offer(anObject)								- 表示如果可能的话,将anObject加到BlockingQueue里,即如果BlockingQueue可以容纳,则返回true,否则返回false.（本方法不阻塞当前执行方法的线程）</span><br><span class="line">offer(E o, long timeout, TimeUnit unit)	- 可以设定等待的时间，如果在指定的时间内，还不能往队列中加入BlockingQueue，则返回失败。</span><br><span class="line">put(anObject)								- 把anObject加到BlockingQueue里,如果BlockQueue没有空间,则调用此方法的线程被阻断直到BlockingQueue里面有空间再继续.</span><br><span class="line">poll(time)									- 取走BlockingQueue里排在首位的对象,若不能立即取出,则可以等time参数规定的时间，取不到时返回null;</span><br><span class="line">poll(long timeout, TimeUnit unit)			- 从BlockingQueue取出一个队首的对象，如果在指定时间内，队列一旦有数据可取，则立即返回队列中的数据。否则知道时间超时还没有数据可取，返回失败。</span><br><span class="line">take										- 取走BlockingQueue里排在首位的对象,若BlockingQueue为空,阻断进入等待状态直到BlockingQueue有新的数据被加入; </span><br><span class="line">drainTo										- 一次性从BlockingQueue获取所有可用的数据对象（还可以指定获取数据的个数），通过该方法，可以提升获取数据效率；不需要多次分批加锁或释放锁。</span><br></pre></td></tr></table></figure>
+<p><code>BlockingQueue</code>不接受<code>null</code>元素。试图add、put或offer一个<code>null</code>元素时，某些实现会抛出<code>NullPointerException</code>。<code>null</code>被用作指示<code>poll</code>操作失败的警戒值。</p>
+<p><code>BlockingQueue</code>成员详细介绍:</p>
+<p><strong>2.1 ArrayBlockingQueue</strong></p>
+<p>基于数组的阻塞队列实现，在<code>ArrayBlockingQueue</code>内部，维护了一个定长数组，以便缓存队列中的数据对象，这是一个常用的阻塞队列，除了一个定长数组外，<code>ArrayBlockingQueue</code>内部还保存着两个整形变量，分别标识着队列的头部和尾部在数组中的位置。</p>
+<p>这是一个典型的“有界缓存区”，固定大小的数组在其中保持生产者插入的元素和使用者提取的元素。一旦创建了这样的缓存区，就不能再增加其容量。试图向已满队列中放入元素会导致放入操作受阻塞；试图从空队列中检索元素将导致类似阻塞。</p>
+<p><code>ArrayBlockingQueue</code>在生产者放入数据和消费者获取数据，都是共用同一个锁对象，由此也意味着两者无法真正并行运行，这点尤其不同于<code>LinkedBlockingQueue</code>；按照实现原理来分析，<code>ArrayBlockingQueue</code>完全可以采用分离锁，从而实现生产者和消费者操作的完全并行运行。Doug Lea之所以没这样去做，也许是因为<code>ArrayBlockingQueue</code>的数据写入和获取操作已经足够轻巧，以至于引入独立的锁机制，除了给代码带来额外的复杂性外，其在性能上完全占不到任何便宜。 <code>ArrayBlockingQueue</code>和<code>LinkedBlockingQueue</code>间还有一个明显的不同之处在于，前者在插入或删除元素时不会产生或销毁任何额外的对象实例，而后者则会生成一个额外的Node对象。这在长时间内需要高效并发地处理大批量数据的系统中，其对于GC的影响还是存在一定的区别。而在创建<code>ArrayBlockingQueue</code>时，我们还可以控制对象的内部锁是否采用公平锁，默认采用非公平锁。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/** The queued items */</span><br><span class="line">final Object[] items;</span><br><span class="line"></span><br><span class="line">/** items index for next take, poll, peek or remove */</span><br><span class="line">int takeIndex;</span><br><span class="line"></span><br><span class="line">/** items index for next put, offer, or add */</span><br><span class="line">int putIndex;</span><br><span class="line"></span><br><span class="line">/** Number of elements in the queue */</span><br><span class="line">int count;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * Concurrency control uses the classic two-condition algorithm</span><br><span class="line"> * found in any textbook.</span><br><span class="line"> */</span><br><span class="line"></span><br><span class="line">/** Main lock guarding all access */</span><br><span class="line">final ReentrantLock lock;</span><br><span class="line">/** Condition for waiting takes */</span><br><span class="line">private final Condition notEmpty;</span><br><span class="line">/** Condition for waiting puts */</span><br><span class="line">private final Condition notFull;</span><br></pre></td></tr></table></figure>
+<p>我们稍微来研究下这些成员变量的含义：</p>
+<ul>
+<li>items：就是队列中的所有对象；</li>
+<li>takeIndex：是标记下一次<code>take</code>、<code>poll</code>、<code>peek</code>和<code>remove</code>的下标；</li>
+<li>putIndex：是标记下一次<code>put</code>、<code>offer</code>和<code>add</code>的下标；</li>
+<li>count：是队列中的对象个数；</li>
+<li>lock：是保护所有访问的锁</li>
+<li>notEmpty：控制所有等待的取操作；</li>
+<li>notFull：控制所有等待的放操作。</li>
+</ul>
+<p>其中，<code>ArrayBlockingQueue</code>的所有主要的操作，都是用<code>lock</code>来控制。而<code>notEmpty</code>和<code>notFull</code>接下来会有进一步的分析。</p>
+<p>我们再来看一下<code>ArrayBlockingQueue</code>的构造函数</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public ArrayBlockingQueue(int capacity) &#123;</span><br><span class="line">    this(capacity, false);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public ArrayBlockingQueue(int capacity, boolean fair) &#123;</span><br><span class="line">    if (capacity &lt;= 0)</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    this.items = new Object[capacity];</span><br><span class="line">    lock = new ReentrantLock(fair);</span><br><span class="line">    notEmpty = lock.newCondition();</span><br><span class="line">    notFull =  lock.newCondition();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，参数<code>capacity</code>是来定义整个Array的大小，<code>fair</code>是来决定否采用公平锁。从默认构造函数可以看出，默认是采用非公平锁。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public ReentrantLock(boolean fair) &#123;</span><br><span class="line">    sync = fair ? new FairSync() : new NonfairSync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于FairSync NonfairSync的分析请参考<a href="#ReentrantLock">备注</a></p>
+<p>接下来，我们来看一下<code>put</code>方法，</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void put(E e) throws InterruptedException &#123;</span><br><span class="line">    checkNotNull(e);</span><br><span class="line">    final ReentrantLock lock = this.lock;</span><br><span class="line">    lock.lockInterruptibly();</span><br><span class="line">    try &#123;</span><br><span class="line">        while (count == items.length)</span><br><span class="line">            notFull.await();</span><br><span class="line">        insert(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为<code>ArrayBlockingQueue</code>不允许插入<code>null</code>，所以首先会调用<code>checkNotNull</code>来判断<code>e</code>是否为<code>null</code>，如果是<code>null</code>，就直接抛出<code>NullPointerException</code>。然后<code>lock</code>的<code>lockInterruptibly</code>方法，以便在加锁后允许线程被中断。接下来就来判断是否有空间来插入新的对象。如果有空间，则直接插入。如果没有空间，则会调用<code>notFull</code>的<code>await</code>方法，进行等待，直到有出现空余空间。</p>
+<p><em>当调用<code>notFull</code>的<code>await</code>方法的时候，就会自动释放之前占有的lock，并且当前线程会被暂停，直到别的线程调用这<code>Condition</code>的<code>signal</code>，<code>signalAll</code>方法，或者中断当前线程。</em><br><em>这里不能是使用<code>lock</code>方法。对于<code>lockInterruptibly</code>方法和<code>lock</code>方法的分析，请参考<a href="#lockInterruptibly">备注</a></em></p>
+<p>一旦如果有空间，则调用<code>insert</code>方法插入新对象。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private void insert(E x) &#123;</span><br><span class="line">    items[putIndex] = x;</span><br><span class="line">    putIndex = inc(putIndex);</span><br><span class="line">    ++count;</span><br><span class="line">    notEmpty.signal();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>insert</code>方法中，值得关注的是调用了<code>notEmpty</code>的<code>signal</code>方法，来唤醒等待的线程。</p>
+<p><strong>2.2 LinkedBlockingQueue</strong></p>
+<p>链接队列的吞吐量通常要高于基于数组的队列，但是在大多数并发应用程序中，其可预知的性能要低。可选的容量范围构造方法参数作为防止队列过度扩展的一种方法。如果未指定容量，则它等于<code>Integer.MAX_VALUE</code>。除非插入节点会使队列超出容量，否则每次插入后会动态地创建链接节点。</p>
+<p>基于链表的阻塞队列，同<code>ArrayListBlockingQueue</code>类似，其内部也维持着一个数据缓冲队列（该队列由一个链表构成），当生产者往队列中放入一个数据时，队列会从生产者手中获取数据，并缓存在队列内部，而生产者立即返回；只有当队列缓冲区达到最大值缓存容量时（<code>LinkedBlockingQueue</code>可以通过构造函数指定该值），才会阻塞生产者队列，直到消费者从队列中消费掉一份数据，生产者线程会被唤醒，反之对于消费者这端的处理也基于同样的原理。而LinkedBlockingQueue之所以能够高效的处理并发数据，还因为其对于生产者端和消费者端分别采用了独立的锁来控制数据同步，这也意味着在高并发的情况下生产者和消费者可以并行地操作队列中的数据，以此来提高整个队列的并发性能。</p>
+<p>作为开发者，我们需要注意的是，如果构造一个<code>LinkedBlockingQueue</code>对象，而没有指定其容量大小，<code>LinkedBlockingQueue</code>会默认一个类似无限大小的容量（<code>Integer.MAX_VALUE</code>），这样的话，如果生产者的速度一旦大于消费者的速度，也许还没有等到队列满阻塞产生，系统内存就有可能已被消耗殆尽了。</p>
+<p>接下来，我们就来参看下<code>LinkedBlockingQueue</code>的源代码，看看它的魔法藏在哪里。</p>
+<p>首先，我们先看一下它的成员变量：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/** The capacity bound, or Integer.MAX_VALUE if none */</span><br><span class="line">private final int capacity;</span><br><span class="line"></span><br><span class="line">/** Current number of elements */</span><br><span class="line">private final AtomicInteger count = new AtomicInteger(0);</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Head of linked list.</span><br><span class="line"> * Invariant: head.item == null</span><br><span class="line"> */</span><br><span class="line">private transient Node&lt;E&gt; head;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Tail of linked list.</span><br><span class="line"> * Invariant: last.next == null</span><br><span class="line"> */</span><br><span class="line">private transient Node&lt;E&gt; last;</span><br><span class="line"></span><br><span class="line">/** Lock held by take, poll, etc */</span><br><span class="line">private final ReentrantLock takeLock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">/** Wait queue for waiting takes */</span><br><span class="line">private final Condition notEmpty = takeLock.newCondition();</span><br><span class="line"></span><br><span class="line">/** Lock held by put, offer, etc */</span><br><span class="line">private final ReentrantLock putLock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">/** Wait queue for waiting puts */</span><br><span class="line">private final Condition notFull = putLock.newCondition();</span><br></pre></td></tr></table></figure>
+<p>在LinkedBlockingQueue的所有共享的全局变量中，final声明的capacity在构造器生成实例时就成了不变量了。而final声明的count由于是AtomicInteger类型的，所以能够保证其操作的原子性。剩下的final的变量都是初始化成了不变量，并且不包含可变属性，所以都是访问安全的。那么剩下的就是Node类型的head和last两个可变量。所以要保证LinkedBlockingQueue是线程安全的就是要保证对head和last的访问是线程安全的。 </p>
+<p>接下来，我们来看一下<code>LinkedBlockingQueue</code>的构造函数：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public LinkedBlockingQueue() &#123;</span><br><span class="line">    this(Integer.MAX_VALUE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public LinkedBlockingQueue(int capacity) &#123;</span><br><span class="line">    if (capacity &lt;= 0) throw new IllegalArgumentException();</span><br><span class="line">    this.capacity = capacity;</span><br><span class="line">    last = head = new Node&lt;E&gt;(null);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从默认构造函数可以看到，<code>LinkedBlockingQueue</code>会默认一个容量为<code>Integer.MAX_VALUE</code>的队列。当使用默认构造函数的时候，我们就必须小心处理，以免造成内存被消耗殆尽。</p>
+<p><code>LinkedBlockingQueue</code>的实现与<code>ArrayBlockingQueue</code>的实现类似，只是使用两个可重入锁<code>takeLock</code>和<code>putLock</code>来保证线程安全性，这里就不再详细分析了，感兴趣的读者可以自行去阅读<code>LinkedBlockingQueue</code>的源代码。</p>
+<p><em><code>ArrayBlockingQueue</code>和<code>LinkedBlockingQueue</code>是两个最普通也是最常用的阻塞队列，一般情况下，在处理多线程间的生产者消费者问题，使用这两个类足以。</em></p>
+<p><strong>2.3 DelayQueue</strong></p>
+<p><code>DelayQueue</code>中的元素只有当其指定的延迟时间到了，才能够从队列中获取到该元素。<code>DelayQueue</code>是一个没有大小限制的队列，因此往队列中插入数据的操作（生产者）永远不会被阻塞，而只有获取数据的操作（消费者）才会被阻塞。</p>
+<p>使用场景：<code>DelayQueue</code>使用场景较少，但都相当巧妙，常见的例子比如使用一个<code>DelayQueue</code>来管理一个超时未响应的连接队列。</p>
+<p><strong>2.4 PriorityBlockingQueue</strong></p>
+<p>基于优先级的阻塞队列（优先级的判断通过构造函数传入的Compator对象来决定），但需要注意的是<code>PriorityBlockingQueue</code>并不会阻塞数据生产者，而只会在没有可消费的数据时，阻塞数据的消费者。因此使用的时候要特别注意，生产者生产数据的速度绝对不能快于消费者消费数据的速度，否则时间一长，会最终耗尽所有的可用堆内存空间。在实现<code>PriorityBlockingQueue</code>时，内部控制线程同步的锁采用的是公平锁。</p>
+<p><strong>2.5 SynchronousQueue</strong></p>
+<p>一种无缓冲的等待队列，类似于无中介的直接交易，有点像原始社会中的生产者和消费者，生产者拿着产品去集市销售给产品的最终消费者，而消费者必须亲自去集市找到所要商品的直接生产者，如果一方没有找到合适的目标，那么对不起，大家都在集市等待。相对于有缓冲的<code>BlockingQueue</code>来说，少了一个中间经销商的环节（缓冲区），如果有经销商，生产者直接把产品批发给经销商，而无需在意经销商最终会将这些产品卖给那些消费者，由于经销商可以库存一部分商品，因此相对于直接交易模式，总体来说采用中间经销商的模式会吞吐量高一些（可以批量买卖）；但另一方面，又因为经销商的引入，使得产品从生产者到消费者中间增加了额外的交易环节，单个产品的及时响应性能可能会降低。</p>
+<p>声明一个<code>SynchronousQueue</code>有两种不同的方式，它们之间有着不太一样的行为。公平模式和非公平模式的区别:</p>
+<ul>
+<li>如果采用公平模式：<code>SynchronousQueue</code>会采用公平锁，并配合一个FIFO队列来阻塞多余的生产者和消费者，从而体系整体的公平策略；</li>
+<li>但如果是非公平模式（<code>SynchronousQueue</code>默认），<code>SynchronousQueue</code>就会采用非公平锁，同时配合一个LIFO队列来管理多余的生产者和消费者。</li>
+</ul>
+<p>对于第二种模式，如果生产者和消费者的处理速度有差距，则很容易出现饥渴的情况，即可能有某些生产者或者是消费者的数据永远都得不到处理。</p>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><h3 id="CopyOnWriteArrayList-amp-CopyOnWriteArraySet"><a href="#CopyOnWriteArrayList-amp-CopyOnWriteArraySet" class="headerlink" title="CopyOnWriteArrayList &amp; CopyOnWriteArraySet"></a>CopyOnWriteArrayList &amp; CopyOnWriteArraySet</h3><p>通过名字，我们大致可以知道<code>CopyOnWriteArrayList</code>和<code>CopyOnWriteArraySet</code>的原理是基本相同的，因此这里我们只针对<code>CopyOnWriteArrayList</code>来进行分析。</p>
+<p>ps：实际上，CopyOnWriteArraySet是基于CopyOnWriteArrayList，只是在CopyOnWriteArrayList的外面多增加了一层封装，来保持元素的为唯一性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CopyOnWriteArrayList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class"><span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt;, <span class="title">RandomAccess</span>, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">transient</span> <span class="keyword">final</span> ReentrantLock lock = <span class="keyword">new</span> ReentrantLock();</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">transient</span> Object[] array;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>CopyOnWriteArrayList</code>主要有两个属性：一个可重入锁<code>lock</code>和一组<code>Object</code>数组<code>array</code>。由于<code>array</code>是<code>private</code>，所以只能通过<code>getArray</code>或者<code>setArray</code>方法来访问底层的数组<code>array</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Object[] getArray() &#123;</span><br><span class="line">	<span class="keyword">return</span> array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setArray</span><span class="params">(Object[] a)</span> </span>&#123;</span><br><span class="line">	array = a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对集合类来说，最为基本的操作是插入操作和删除操作。因此接下来我们来看一下<code>CopyOnWriteArrayList</code>的插入操作（由于删除操作的实现基本相似，这里就不进行分析）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">final</span> ReentrantLock lock = <span class="keyword">this</span>.lock;</span><br><span class="line">	lock.lock();</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">		Object[] elements = getArray();</span><br><span class="line">		<span class="keyword">int</span> len = elements.length;</span><br><span class="line">		Object[] newElements = Arrays.copyOf(elements, len + <span class="number">1</span>);</span><br><span class="line">		newElements[len] = e;</span><br><span class="line">		setArray(newElements);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">	&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">		lock.unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据<code>add</code>方法的实现，我们可以发现，对<code>CopyOnWriteArrayList</code>的插入操作都是在<code>array</code>数组的拷贝上进行。因此，<code>CopyOnWriteArrayList</code>的关键点在于：不管是添加或者删除<code>CopyOnWriteArrayList</code>中的项，这些操作都是在底层的数组的拷贝上进行修改。也就是说，你每修改一次数组，就会生成一个拷贝。因此如果经常修改数组的话，会影响<code>CopyOnWriteArrayList</code>的性能。</p>
+<p>基于这样的实现，如果某个线程修改了共享的<code>CopyOnWriteArrayList</code>，其他的线程所持有的拷贝数组是不会随之改变的，这些变化对其他线程来说是不可见的。</p>
+<p>另外，如果你尝试对<code>CopyOnWriteArrayList</code>进行排序，则会抛出<code>UsupportedOperationException</code>异常，因为排序需要对数组进行N次修改，所以<code>CopyOnWriteArrayList</code>本身是不支持排序的。</p>
+<h2 id="备注"><a href="#备注" class="headerlink" title="备注"></a>备注</h2><p><em>PS：部分内容参考了DA MichaelPeng关于ReentrantLock的博文</em></p>
+<p><span id="lockInterruptibly"></span></p>
+<h3 id="lockInterruptibly-amp-lock"><a href="#lockInterruptibly-amp-lock" class="headerlink" title="lockInterruptibly &amp; lock"></a>lockInterruptibly &amp; lock</h3><p>ReentrantLock.lockInterruptibly允许在等待时由其它线程调用等待线程的Thread.interrupt方法来中断等待线程的等待而直接返回，这时不用获取锁，而会抛出一个InterruptedException。而ReentrantLock.lock方法不允许Thread.interrupt中断,即使检测到Thread.isInterrupted,一样会继续尝试获取锁，失败则继续休眠。只是在最后获取锁成功后再把当前线程置为interrupted状态。</p>
+<p>那lockInterruptibly是如何做到这一点的呢？</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void lockInterruptibly() throws InterruptedException &#123;</span><br><span class="line">	sync.acquireInterruptibly(1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里调用了<code>AbstractQueuedSynchronizer</code>的<code>acquireInterruptibly</code>方法。如果线程已被中断则直接抛出异常，否则则尝试获取锁，失败则<code>doAcquireInterruptibly</code>。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Acquires in exclusive mode, aborting if interrupted.</span><br><span class="line"> * Implemented by first checking interrupt status, then invoking</span><br><span class="line"> * at least once &#123;@link #tryAcquire&#125;, returning on</span><br><span class="line"> * success.  Otherwise the thread is queued, possibly repeatedly</span><br><span class="line"> * blocking and unblocking, invoking &#123;@link #tryAcquire&#125;</span><br><span class="line"> * until success or the thread is interrupted.  This method can be</span><br><span class="line"> * used to implement method &#123;@link Lock#lockInterruptibly&#125;.</span><br><span class="line"> *</span><br><span class="line"> * @param arg the acquire argument.  This value is conveyed to</span><br><span class="line"> *        &#123;@link #tryAcquire&#125; but is otherwise uninterpreted and</span><br><span class="line"> *        can represent anything you like.</span><br><span class="line"> * @throws InterruptedException if the current thread is interrupted</span><br><span class="line"> */</span><br><span class="line">public final void acquireInterruptibly(int arg) throws InterruptedException &#123;</span><br><span class="line">    if (Thread.interrupted())</span><br><span class="line">        throw new InterruptedException();</span><br><span class="line">    if (!tryAcquire(arg))</span><br><span class="line">        doAcquireInterruptibly(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AbstractQueuedSynchronizer.doAcquireInterruptibly大体上相当于前面的acquireQueued,关键的区别在于检测到interrupted后的处理，acquireQueued简单的记录下中断曾经发生，然后就像没事似的去尝试获取锁，失败则休眠。而doAcquireInterruptibly检测到中断则直接退出循环，抛出InterruptedException异常。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Acquires in exclusive interruptible mode.</span><br><span class="line"> * @param arg the acquire argument</span><br><span class="line"> */</span><br><span class="line">private void doAcquireInterruptibly(int arg)</span><br><span class="line">    throws InterruptedException &#123;</span><br><span class="line">    final Node node = addWaiter(Node.EXCLUSIVE);</span><br><span class="line">    try &#123;</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            final Node p = node.predecessor();</span><br><span class="line">            if (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                setHead(node);</span><br><span class="line">                p.next = null; // help GC</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            /*</span><br><span class="line">            acquireQueued代码:</span><br><span class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                interrupted = true;</span><br><span class="line">            */</span><br><span class="line">            if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (RuntimeException ex) &#123;</span><br><span class="line">        cancelAcquire(node);</span><br><span class="line">        throw ex;</span><br><span class="line">    &#125;</span><br><span class="line">    // Arrive here only if interrupted</span><br><span class="line">    // 取消获取锁尝试，将当前节点从等待队列中移除</span><br><span class="line">    cancelAcquire(node);</span><br><span class="line">    throw new InterruptedException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在抛出异常之前，doAcquireInterruptibly还做了一件事情，cancelAcquire。cancelAcquire中有些细节值得玩味，参见代码中笔者注释。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">private void cancelAcquire(Node node) &#123;</span><br><span class="line">       // Ignore if node doesn&apos;t exist</span><br><span class="line">       if (node == null)</span><br><span class="line">           return;</span><br><span class="line"></span><br><span class="line">       node.thread = null;</span><br><span class="line"></span><br><span class="line">       // Skip cancelled predecessors</span><br><span class="line">       // 头节点一定不会是在等待状态，所以不会被cancel,所以这里一定能找到一个节点而不用担心null</span><br><span class="line">       Node pred = node.prev;</span><br><span class="line">       while (pred.waitStatus &gt; 0)</span><br><span class="line">           node.prev = pred = pred.prev;</span><br><span class="line"></span><br><span class="line">       // Getting this before setting waitStatus ensures staleness</span><br><span class="line">       Node predNext = pred.next;</span><br><span class="line">       // Can use unconditional write instead of CAS here</span><br><span class="line">       node.waitStatus = Node.CANCELLED;</span><br><span class="line"></span><br><span class="line">       // If we are the tail, remove ourselves</span><br><span class="line">       if (node == tail &amp;&amp; compareAndSetTail(node, pred)) &#123;</span><br><span class="line">           compareAndSetNext(pred, predNext, null);</span><br><span class="line">       &#125; else &#123;</span><br><span class="line">           // If &quot;active&quot; predecessor found...</span><br><span class="line">           if (pred != head</span><br><span class="line">               &amp;&amp; (pred.waitStatus == Node.SIGNAL</span><br><span class="line">               || compareAndSetWaitStatus(pred, 0, Node.SIGNAL))</span><br><span class="line">               &amp;&amp; pred.thread != null) &#123;</span><br><span class="line"></span><br><span class="line">               // If successor is active, set predecessor&apos;s next link</span><br><span class="line">               Node next = node.next;</span><br><span class="line">               if (next != null &amp;&amp; next.waitStatus &lt;= 0)</span><br><span class="line">               compareAndSetNext(pred, predNext, next);</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               /*这里如果不调用unparkSuccessor, 若在interrupted之后，执行到上面一句将waitStatus置CANCELLED之前，锁被释放，该线程被唤醒，则释放锁线程的unparkSuccessor不能起到预期作用，所以这里需要调用unparkSuccessor.即使此时持有锁的线程没有释放锁也不会有严重后果，被unpark的线程在获取锁失败后会继续park*/</span><br><span class="line">               unparkSuccessor(node);</span><br><span class="line">           &#125;</span><br><span class="line">           node.next = node; // help GC</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p><span id="ReentrantLock"></span></p>
+<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h3><p><code>ReentrantLock</code>是<code>java.util.concurrent.locks</code>中的一个可重入锁类，实现了<code>Lock</code>和<code>Serializable</code>接口。在高竞争条件下有更好的性能，且可以中断。</p>
+<p>我们先来看ReentrantLock最常用的代码lock</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void lock() &#123;</span><br><span class="line">       sync.lock();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>很简单，只是直接调用了成员变量的<code>sync</code>的<code>lock</code>方法</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/** Synchronizer providing all implementation mechanics */</span><br><span class="line">private final Sync sync;</span><br></pre></td></tr></table></figure>
+<p>从注释中，可以看到sync实现了所有的实现机制，而ReentrantLock只是转发请求而已。</p>
+<p><code>Sync</code>是<code>ReentrantLock</code>的静态内部类，并且继承了<code>AbstractQueuedSynchronizer</code>类。Sync有两个子类：<code>FairSync</code>公平锁和<code>NonFairSync</code>非公平锁，</p>
+<p>1）如果锁是公平锁，当锁已经被其他线程占有时，新的请求线程会加入到等待队列，按照请求顺序来获得锁。<br>2）如果锁是非公平锁，线程可以闯入，当锁的状态可用，请求非公平锁的线程可在等待队列中向前跳跃，获得该锁。如果尝试失败，则再采用类似公平锁的那种方式。</p>
+<p>为了更深入地理解整个的机制，我们不妨从它们的实现代码来窥探整个获取锁的过程。</p>
+<p>首先，作为最核心的类<code>AbstractQueuedSynchronizer</code>，有三个最重要的成员变量：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Head of the wait queue, lazily initialized.  Except for</span><br><span class="line"> * initialization, it is modified only via method setHead.  Note:</span><br><span class="line"> * If head exists, its waitStatus is guaranteed not to be</span><br><span class="line"> * CANCELLED.</span><br><span class="line"> */</span><br><span class="line">private transient volatile Node head;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Tail of the wait queue, lazily initialized.  Modified only via</span><br><span class="line"> * method enq to add new wait node.</span><br><span class="line"> */</span><br><span class="line">private transient volatile Node tail;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The synchronization state.</span><br><span class="line"> */</span><br><span class="line">private volatile int state;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The synchronization state.</span><br><span class="line"> */</span><br><span class="line">private volatile int state;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>state</code>变量记录了当前锁被锁定的次数。如果<code>state</code>为0，则表示锁未被锁定。为了保证更新操作的原子性，更改<code>state</code>状态主要由函数<code>compareAndSetState</code>来实现。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">protected final boolean compareAndSetState(int expect, int update) &#123;</span><br><span class="line">       // See below for intrinsics setup to support this</span><br><span class="line">       return unsafe.compareAndSwapInt(this, stateOffset, expect, update);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>只有当如果<code>state</code>值为<code>expect</code>，则更新为<code>update</code>值且返回<code>true</code>，否则不更改<code>state</code>且返回<code>false</code>。</p>
+<p>通常，我们不会直接使用到<code>AbstractQueuedSynchronizer</code>，而是<code>NonfairSync</code>和<code>FairSync</code>。</p>
+<p>所以我们不妨先从<code>NonfairSync</code>入手。</p>
+<p>下面是<code>NonfairSync</code>的实现代码：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">static final class NonfairSync extends Sync &#123;</span><br><span class="line">    private static final long serialVersionUID = 7316153563782823691L;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * Performs lock.  Try immediate barge, backing up to normal</span><br><span class="line">     * acquire on failure.</span><br><span class="line">     */</span><br><span class="line">    final void lock() &#123;</span><br><span class="line">        if (compareAndSetState(0, 1))</span><br><span class="line">            setExclusiveOwnerThread(Thread.currentThread());</span><br><span class="line">        else</span><br><span class="line">            acquire(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">        return nonfairTryAcquire(acquires);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从中，可以看到在<code>lock</code>方法中，调用了<code>AbstractQueuedSynchronizer</code>的<code>acquire</code>方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final void acquire(int arg) &#123;</span><br><span class="line">    if (!tryAcquire(arg) &amp;&amp;</span><br><span class="line">        acquireQueued(addWaiter(Node.EXCLUSIVE), arg))</span><br><span class="line">        selfInterrupt();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>acquire</code>方法中，会再次尝试加锁，如果再次失败则会加入等待队列，并禁用当前线程，直到被中断或有线程释放锁时被唤醒：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">private static void selfInterrupt() &#123;</span><br><span class="line">       Thread.currentThread().interrupt();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>而<code>Sync</code>的<code>nonfairTryAcquire</code>方法的实现如下：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">final boolean nonfairTryAcquire(int acquires) &#123;</span><br><span class="line">   	final Thread current = Thread.currentThread();</span><br><span class="line">    int c = getState();</span><br><span class="line">   	if (c == 0) &#123;</span><br><span class="line">   		// 如果c为0，那就代表当前锁空闲</span><br><span class="line">   		// 然后就尝试锁定，如果成功的设当前的线程为锁的拥有者</span><br><span class="line">       	if (compareAndSetState(0, acquires)) &#123;</span><br><span class="line">           	setExclusiveOwnerThread(current);</span><br><span class="line">            return true;</span><br><span class="line">   	    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">   	else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">   		// 如果当前线程是锁的拥有者，因为是可重入锁，所以就直接修改锁的状态</span><br><span class="line">       	int nextc = c + acquires;</span><br><span class="line">        if (nextc &lt; 0) // overflow</span><br><span class="line">   	        throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">       	setState(nextc);</span><br><span class="line">        return true;</span><br><span class="line">   	&#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>tryAcquire</code>失败后，首先调用<code>AbstractQueuedSynchronizer</code>的<code>addWaiter</code>方法将当前线程加入等待队列尾部，然后调用A<code>bstractQueuedSynchronizer</code>的<code>acquireQueued</code>方法让线程进入禁用状态，并在每次被唤醒时尝试获取锁，失败则继续禁用线程。</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">final boolean acquireQueued(final Node node, int arg) &#123;</span><br><span class="line">       try &#123;</span><br><span class="line">           boolean interrupted = false;</span><br><span class="line">           for (;;) &#123;</span><br><span class="line">               // 如果当前线程是head的直接后继则尝试获取锁</span><br><span class="line">               // 这里不会和等待队列中其它线程发生竞争，但会和尝试获取锁且尚未进入等待队列的线程发生竞争。这是非公平锁和公平锁的一个重要区别。</span><br><span class="line">               final Node p = node.predecessor();</span><br><span class="line">               if (p == head &amp;&amp; tryAcquire(arg)) &#123;</span><br><span class="line">                   setHead(node);</span><br><span class="line">                   p.next = null; // help GC</span><br><span class="line">                   return interrupted;</span><br><span class="line">               &#125;</span><br><span class="line">               // 如果不是head直接后继或获取锁失败，则检查是否要禁用当前线程</span><br><span class="line">               // 是则禁用，直到被lock.release唤醒或线程中断</span><br><span class="line">               if (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                   parkAndCheckInterrupt())</span><br><span class="line">                   interrupted = true;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; catch (RuntimeException ex) &#123;</span><br><span class="line">           cancelAcquire(node);</span><br><span class="line">           throw ex;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>最后我们再来看一下<code>FairSync</code>的<code>tryAcquire</code>方法：</p>
+<figure class="highlight plain"><figcaption><span>java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">protected final boolean tryAcquire(int acquires) &#123;</span><br><span class="line">    final Thread current = Thread.currentThread();</span><br><span class="line">    int c = getState();</span><br><span class="line">    if (c == 0) &#123;</span><br><span class="line">        if (!hasQueuedPredecessors() &amp;&amp;</span><br><span class="line">            compareAndSetState(0, acquires)) &#123;</span><br><span class="line">            setExclusiveOwnerThread(current);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else if (current == getExclusiveOwnerThread()) &#123;</span><br><span class="line">        int nextc = c + acquires;</span><br><span class="line">        if (nextc &lt; 0)</span><br><span class="line">            throw new Error(&quot;Maximum lock count exceeded&quot;);</span><br><span class="line">        setState(nextc);</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现与<code>Sync</code>的<code>nonfairTryAcquire</code>方法非常类似，除了多了一个判断<code>hasQueuedPredecessors()</code>，是用来确保队列中的线程是按照请求顺序来获取锁。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/05/12/java-concurrency-utility/" rel="next" title="Java Concurrency - Utility">
+                <i class="fa fa-chevron-left"></i> Java Concurrency - Utility
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2014/07/03/git-lets-change-history/" rel="prev" title="git - start to change history">
+                git - start to change history <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ConcurrentHashMap"><span class="nav-number">1.</span> <span class="nav-text">ConcurrentHashMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue"><span class="nav-number">2.</span> <span class="nav-text">BlockingQueue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#其他"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList-amp-CopyOnWriteArraySet"><span class="nav-number">3.1.</span> <span class="nav-text">CopyOnWriteArrayList &amp; CopyOnWriteArraySet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#备注"><span class="nav-number">4.</span> <span class="nav-text">备注</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lockInterruptibly-amp-lock"><span class="nav-number">4.1.</span> <span class="nav-text">lockInterruptibly &amp; lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReentrantLock"><span class="nav-number">4.2.</span> <span class="nav-text">ReentrantLock</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。 但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。 因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="webpack-前端界中的打包利器">
+<meta property="og:url" content="https://yang2012.github.io/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。 但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。 因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/webpack/webpack-icon.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/webpack/webpack-brief.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/webpack/sourcemap.png">
+<meta property="og:updated_time" content="2019-04-23T10:01:30.550Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="webpack-前端界中的打包利器">
+<meta name="twitter:description" content="现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。 但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。 因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/webpack/webpack-icon.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>webpack-前端界中的打包利器 | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">webpack-前端界中的打包利器
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2016-12-25 00:00:00" itemprop="dateCreated datePublished" datetime="2016-12-25T00:00:00+08:00">2016-12-25</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/images/post/webpack/webpack-icon.png" alt="Hello webpack"></p>
+<p>现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。</p>
+<p>但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。</p>
+<p>因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是webpack的功能。</p>
+<p><img src="/images/post/webpack/webpack-brief.png" alt="What can webpack do"></p>
+<p>webpack是一种<strong>模块化</strong>的解决方案。所有的文件，对于webpack来说，通过组合合适的loader，都可以当做模块来处理，包括JavaScript代码，CSS和fonts，以及多媒体资源等。</p>
+<a id="more"></a>
+<h3 id="Entry"><a href="#Entry" class="headerlink" title="Entry"></a>Entry</h3><p>每个入口单独编译成一个js文件。entry是webpack会解析和打包的入口，没有被entry依赖的模块是不会导入，其它的模块需要通过import, require, url等导入相关位置，</p>
+<p>entry支持两只形式，字符串和数组形式。</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">entry: &#123;</span><br><span class="line">        page1: &quot;./page1&quot;,</span><br><span class="line">        //支持数组形式，将加载数组中的所有模块，但以最后一个模块作为输出</span><br><span class="line">        page2: [&quot;./entry1&quot;, &quot;./entry2&quot;]</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>使用数组形式的时候，将加载数组中的所有模块，但以最后一个模块作为输出</p>
+<h3 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h3><p>简单来讲，就是告知webpack每一种文件应该怎么处理，即需要使用什么加载器来处理 注意所有的加载器都需要通过<code>npm</code>来加载</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- test：一个匹配loaders所处理的文件的拓展名的正则表达式（必须）</span><br><span class="line">- loader：loader的名称（必须）</span><br><span class="line">- include/exclude:必须处理的文件（文件夹）或不需要处理的文件（文件夹）（可选）；</span><br><span class="line">- query：为loaders提供额外的设置选项（可选）</span><br></pre></td></tr></table></figure>
+<p>下面是几个我们经常用到的loader：</p>
+<h4 id="babel"><a href="#babel" class="headerlink" title="babel"></a>babel</h4><p>编译JavaScript的平台，它的强大之处表现在可以通过编译帮你达到以下目的：</p>
+<ul>
+<li>下一代的JavaScript标准（ES6，ES7），这些标准目前并未被当前的浏览器完全的支持；</li>
+<li>使用基于JavaScript进行了拓展的语言，比如React的JSX</li>
+</ul>
+<p>这里就不详细介绍babel了，感兴趣的可以直接到<a href="https://babeljs.io/" target="_blank" rel="noopener">官网</a>了解</p>
+<h4 id="CSS"><a href="#CSS" class="headerlink" title="CSS"></a>CSS</h4><p>使你能够使用类似@import 和 url(…)的方法实现 require()的功能</p>
+<h4 id="Style"><a href="#Style" class="headerlink" title="Style"></a>Style</h4><p>将所有的计算后的样式加入页面中</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">url：</span><br><span class="line">&#123;</span><br><span class="line">    test: /\.(png|jpg|gif)$/,</span><br><span class="line">    loader: &apos;url?limit=2000&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>图片文件的大小，如果小于2kb，则直接用uri方式，即base64，嵌在css中；大于2kb的文件，则是拷贝图片资源到目标目录，用url的方式引用。</p>
+<p>这样的好处当然是减少网络请求的数量。对于小文件，建立链接的花费比单纯下载文件的还要多。</p>
+<h4 id="Plugin"><a href="#Plugin" class="headerlink" title="Plugin"></a>Plugin</h4><ul>
+<li><p>OccurenceOrderPlugin :为组件分配ID，通过这个插件webpack可以分析和优先考虑使用最多的模块，并为它们分配最小的ID</p>
+</li>
+<li><p>UglifyJsPlugin：顾名思义，就是用来压缩JS代码的；</p>
+</li>
+<li><p>ExtractTextPlugin：分离CSS和JS文件。webpack默认将css代码嵌在js中，如果想从js文件中抽取css，可以使用ExtractTextPlugin</p>
+</li>
+</ul>
+<p>生成单个文件</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new ExtractTextPlugin(&quot;index.css&quot;, &#123;</span><br><span class="line">    disable: false,</span><br><span class="line">    allChunks: true</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>生成多个文件</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">new ExtractTextPlugin([name.css], &#123;</span><br><span class="line">    disable: false,</span><br><span class="line">    allChunks: true</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><h4 id="SourceMap"><a href="#SourceMap" class="headerlink" title="SourceMap"></a>SourceMap</h4><p>打包后的文件融合了多个文件，正常情况下很难直接定位源码错误的地方，Source Maps就是来帮我们解决这个问题的。</p>
+<p>通过简单的配置后，webpack在打包时可以为我们生成的source maps</p>
+<p>在生成文件的最后一行，都会有这么一句注释，<code>//# sourceMappingURL=menuedit.js.map</code>，描述sourcemap文件的地址。支持sourcemap的浏览器会识别这句注释，不支持的则会直接忽略。</p>
+<p>如果需要设置断点，需要到webpack目录下的文件中设置，如下图中的businessstatistics.jsx</p>
+<p><img src="/images/post/webpack/sourcemap.png" alt="sourcemap"></p>
+<h4 id="Dev-Server"><a href="#Dev-Server" class="headerlink" title="Dev Server"></a>Dev Server</h4><blockquote>
+<p>webpack-dev-server是一个小型的node.js Express服务器,它使用webpack-dev-middleware中间件来为通过webpack打包生成的资源文件提供Web服务。它还有一个通过Socket.IO连接着webpack-dev-server服务器的小型运行时程序。webpack-dev-server发送关于编译状态的消息到客户端，客户端根据消息作出响应。</p>
+</blockquote>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">devServer: &#123;</span><br><span class="line">    contentBase: path.resolve(__dirname, &quot;public&quot;),</span><br><span class="line">    historyApiFallback: false,</span><br><span class="line">    hot: true,</span><br><span class="line">    port: 8089,</span><br><span class="line">    noInfo: false,</span><br><span class="line">    publicPath: &quot;/assets/&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中</p>
+<ul>
+<li><p>contentBase: 默认会以当前目录为基本目录，如果需要修改，就可以通过这个来进行配置</p>
+</li>
+<li><p>publicPath：指定编译后的包(bundle)的访问位置（命令行模式下一定要指定）</p>
+</li>
+</ul>
+<p>当指定publicPath为<em>/assets</em>，就需要用<code>/assets/**.js</code>这种路径来引用html文件中对js或者css文件等外部资源：</p>
+<p><em>注意：webpack-dev-server生成的文件并没有放在真实目录中，而是放在了内存中。</em></p>
+<p>我们也可以直接使用<code>node.js</code>来开启devServer</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">for (let key in config.entry) &#123;</span><br><span class="line">    let ar = config.entry[key];</span><br><span class="line">    ar.unshift(&quot;webpack-dev-server/client?http://localhost:8080&quot;, &quot;webpack/hot/dev-server&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">config.plugins = config.plugins || [];</span><br><span class="line">config.plugins.push(new webpack.HotModuleReplacementPlugin());</span><br><span class="line"></span><br><span class="line">new WebpackDevServer(webpack(config), config.devServer)</span><br><span class="line">    .listen(port, ip, (err) =&gt; &#123;</span><br><span class="line">        if (err) &#123;</span><br><span class="line">            console.log(err);</span><br><span class="line">        &#125;</span><br><span class="line">        console.log(&apos;Listening at localhost:&apos; + port);</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
+<p>关于devServer的配置说明可以查看官网的<a href="http://webpack.github.io/docs/webpack-dev-server.html" target="_blank" rel="noopener">webpack dev server</a>的说明，或参考这个博客<a href="https://segmentfault.com/a/1190000006964335" target="_blank" rel="noopener">详解webpack-dev-server的使用</a></p>
+<h3 id="集成"><a href="#集成" class="headerlink" title="集成"></a>集成</h3><p>webpack即可以单独使用，也可以与其他工具相互集成，如Gulp。在Gulp中使用webpack非常简单，只要像下面这样配置就可：</p>
+<figure class="highlight plain"><figcaption><span>ruby</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gulp.task(&apos;webpack&apos;, function() &#123;</span><br><span class="line">    return gulp.src([&apos;./entries/*.jsx&apos;])</span><br><span class="line">        .pipe(named())</span><br><span class="line">        .pipe(gulpWebpack(require(&apos;./webpack.config.json&apos;)))</span><br><span class="line">        .pipe(gulp.dest(DEST_PATH));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/10/11/css-serials-beach-ball/" rel="next" title="CSS Serials - Beach Ball">
+                <i class="fa fa-chevron-left"></i> CSS Serials - Beach Ball
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/01/22/set-up-ssl-on-github-pages-with-custom-domains/" rel="prev" title="Set Up SSL on Github Pages With Custom Domains">
+                Set Up SSL on Github Pages With Custom Domains <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Entry"><span class="nav-number">1.</span> <span class="nav-text">Entry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loader"><span class="nav-number">2.</span> <span class="nav-text">loader</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#babel"><span class="nav-number">2.1.</span> <span class="nav-text">babel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CSS"><span class="nav-number">2.2.</span> <span class="nav-text">CSS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Style"><span class="nav-number">2.3.</span> <span class="nav-text">Style</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Plugin"><span class="nav-number">2.4.</span> <span class="nav-text">Plugin</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调试"><span class="nav-number">3.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SourceMap"><span class="nav-number">3.1.</span> <span class="nav-text">SourceMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dev-Server"><span class="nav-number">3.2.</span> <span class="nav-text">Dev Server</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集成"><span class="nav-number">4.</span> <span class="nav-text">集成</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
