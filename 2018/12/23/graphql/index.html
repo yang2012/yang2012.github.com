@@ -104,10 +104,28 @@
 <meta property="og:site_name" content="Justin Yang">
 <meta property="og:description" content="导读本篇文章主要是为了宣导 GraphQL 技术，包含了介绍 GraphQL 能解决的问题和尚不完善的地方，以及我们团队在实际业务场景中的实践总结。希望读者能通过这篇文章，了解到 GraphQL 的优缺点，在遇到合适的场景中能多一个技术选择，并在日后的实践过程能有所参考，避免重复踩坑。 背景目前在我们绝大多数的场景中，后端提供的接口是基于 RESTful 风格的接口，而 RESTful 架构风格的">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-04-28T08:02:56.488Z">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128052124.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128052144.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128103910.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128057823.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128104064.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/136637568.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/136673448.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128198702.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/128260354.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/144971891.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/134899495.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/134914845.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/134897956.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/135033258.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/134950238.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/135033459.png">
+<meta property="og:image" content="https://yang2012.github.io/images/post/graphql/134924789.png">
+<meta property="og:updated_time" content="2019-04-28T09:45:07.160Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GraphQL - 一种用于 API 的查询语言">
 <meta name="twitter:description" content="导读本篇文章主要是为了宣导 GraphQL 技术，包含了介绍 GraphQL 能解决的问题和尚不完善的地方，以及我们团队在实际业务场景中的实践总结。希望读者能通过这篇文章，了解到 GraphQL 的优缺点，在遇到合适的场景中能多一个技术选择，并在日后的实践过程能有所参考，避免重复踩坑。 背景目前在我们绝大多数的场景中，后端提供的接口是基于 RESTful 风格的接口，而 RESTful 架构风格的">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/graphql/128052124.png">
 
 
 
@@ -436,20 +454,20 @@
 </ul>
 <p>2.数据冗余<br>后端提供的接口，通常会在多个场景（或页面）中使用，后端同学无法事先预知前端需要哪些数据，因此基本都是返回大而全的信息，宁多勿缺。随着业务的发展，会加入更多的数据，而且为了保持兼容性，基本只增不减。</p>
 <p>3.文档缺失<br>文档跟接口分离，无法直观通过接口或者单个文档获取所有需要的接口信息。同时，文档很难与实现完全保持一致，基本依靠人工来保证信息的准确性和及时性，不可靠。</p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>图片加载失败，点击重试</p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p><img src="/images/post/graphql/128052124.png" alt="graphql"></p>
 <p>作为 Facebook 在 2015 年推出的查询语言，GraphQL 能够对 API 中的数据提供一套易于理解的完整描述，使得前端能够更加准确的获得它需要的数据，目前包括 Facebook、Twitter、GitHub 在内的很多公司都已经在生产环境使用 GraphQL 提供 API。<br>以下是官方对 GraphQL 的定义</p>
 <blockquote>
 <p>GraphQL 既是一种用于 API 的查询语言也是一个满足你数据查询的运行时。 GraphQL 对你的 API 中的数据提供了一套易于理解的完整描述，使得客户端能够准确地获得它需要的数据，而且没有任何冗余，也让 API 更容易地随着时间推移而演进，还能用于构建强大的开发者工具。</p>
 </blockquote>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128052144.png" alt="graphql"></p>
 <p>GraphQL 的强大表达能力主要还是来自于它完备的类型系统，与 REST 不同，它将整个 Web 服务中的全部资源看成一个有连接的图，而不是一个个资源孤岛，在访问任何资源时都可以通过资源之间的连接访问其它的资源。<br>举个例子，假如我们有以下的结构</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128103910.png" alt="graphql"></p>
 <p>当我们访问 User 资源时，就可以通过 GraphQL 中的连接访问当前 User 的 Repo 和 Issue 等资源，我们不再需要通过多个 REST 的接口分别获取这些资源，只需要通过如下所示的查询就能一次性拿到全部的结果：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    user &#123;</span><br><span class="line">        id</span><br><span class="line">        email</span><br><span class="line">        username</span><br><span class="line">        repos(first: 10) &#123;</span><br><span class="line">            id</span><br><span class="line">            url</span><br><span class="line">            name</span><br><span class="line">            issues(first: 20) &#123;</span><br><span class="line">                id</span><br><span class="line">                author</span><br><span class="line">                title</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>GraphQL 这种方式能够将原有 RESTful 风格时的多次请求聚合成一次请求，不仅能够减少多次请求带来的延迟，还能够降低服务器压力，加快前端的渲染速度。<br>此外，它的类型系统也非常丰富，除了标量、枚举、列表和对象等类型之外，还支持接口和联合类型等高级特性。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128057823.png" alt="graphql"></p>
 <h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p>与 RESTful 最明显的不同，是每一个的 GraphQL 服务其实对外只提供了一个用于调用内部接口的端点，所有的请求都访问这个暴露出来的唯一端点。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128104064.png" alt="graphql"></p>
 <p>GraphQL 实际上将多个 HTTP 请求聚合成了一个请求，它只是将多个 RESTful 请求的资源变成了一个从根资源 Post 访问其他资源的 Comment 和 Author 的图，多个请求变成了一个请求的不同字段，从原有的分散式请求变成了集中式的请求，这种方式非常适合单体服务直接对外提供 GraphQL 服务，能够在数据源和展示层建立一个非常清晰的分离，同时也能够通过一些强大的工具，例如 GraphiQL 直接提供可视化的文档。</p>
 <h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>1.数据的关联性和结构化更好<br>RESTful 所操作的资源相对是离散的；而 GraphQL 的数据更有整体性。<br>举个例子，如果要获取 A 的朋友的朋友，用 RESTful 该怎么做呢？<br>假设我们有这样一个接口：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /user/:userId/friends/</span><br></pre></td></tr></table></figure>
@@ -492,19 +510,19 @@
 <p>DataLoader is a generic utility to be used as part of your application’s data fetching layer to provide a simplified and consistent API over various remote data sources such as databases or web services via batching and caching.</p>
 </blockquote>
 <h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><p>在业务复杂性指数提升的今天，微服务架构成为了解决某些问题时必不可少的解决方案，因此，在实际应用中，如何在微服务架构中使用 GraphQL 提高前后端之间的沟通效率并降低开发成本成为了一个值得考虑的问题。<br>微服务架构是希望将大服务拆分成多个自恰的微服务，而Graphql 则希望将数据都进行汇集，一个强调拆，一个强调合，其中会有一些碰撞，解决的关键就在于如何设计schema。<br>从总体来看，微服务架构暴露的 GraphQL 接口应该只有两种：<br>一种接口是分散式的，每一个微服务对外暴露不同的端点，分别对外界提供服务。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/136637568.png" alt="graphql"></p>
 <p>在这种情况下，流量的路由是根据用户请求的不同服务进行分发的，也就是我们会有以下的一些 GraphQL API 服务：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://draveness.me/posts/api/graphql</span><br><span class="line">https://draveness.me/comments/api/graphql</span><br><span class="line">https://draveness.me/subscriptions/api/graphql</span><br></pre></td></tr></table></figure>
 <p>但这种设计其实并没有充分利用 GraphQL 服务的优点，当客户端或前端同时需要多个服务的资源时，需要分别请求不同服务上的资源，并不能通过一次 HTTP 请求满足全部的需求。</p>
 <p>另一种方式其实提供了一种集中式的接口，所有的微服务对外共同暴露一个端点，根据请求中不同的字段进行路由。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/136673448.png" alt="graphql"></p>
 <p>这种方式是按照 field 进行路由的，而 GraphQL 已经帮助我们完成了解析的过程，我们只需要对相应字段实现特定的 Resolver 处理返回的逻辑就可以。<br>在实践中，作为一门中心化的查询语言，GraphQL 在最佳实践中应该只对外暴露一个端点，并且这个端点包含当前 Web 服务应该提供的全部资源，并把它们合理的连接成图，因此第二种方式更加合理。</p>
 <p>然而这种方式，需要思考如何解决在整合 Schema 的过程中服务之间的重复资源和冲突字段问题，需要找到一种机制将多个服务的 Schema 完美整合起来。</p>
 <p>目前业界主要有以下解决方式：<br>1）前缀<br>为多个服务提供的资源添加命名空间，一般来说就是前缀，在合并 Schema 时，通过添加前缀能够避免不同服务出现重复字段造成冲突的可能。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128198702.png" alt="graphql"></p>
 <p>感兴趣的可以阅读 GraphQL at massive scale: GraphQL as the glue in a microservice architecture 了解这种做法的实现细节。这种增加前缀解决冲突的方式优点就是开发成本非常低，但是它将各个微服务的资源看成是一个个的孤岛，资源相互之间没有办法建立关系，串联起来。</p>
 <p>2）粘合<br>GraphQL 官方提供了一种名为 Schema Stitching 的方案，能够将不同服务的 GraphQL Schema 粘合起来并对外暴露统一的接口，这种方式能够将多个服务中的不同资源粘合起来，能够充分利用 GraphQL 的优势。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/128260354.png" alt="graphql"></p>
 <p>这种方式，需要我们在上层完成对公共资源的处理。当整个 Schema 进行合并时，如果遇到公共资源，就会选用特定的 Resolver 进行解析，而这些解析器的逻辑是在 Schema Stitching 时指定的。</p>
 <p>官方提供了一个实现方式，就是通过方法 mergeSchemas ，其详情可以参看 <a href="https://www.apollographql.com/docs/apollo-server/api/graphql-tools.html#mergeSchemas" target="_blank" rel="noopener">https://www.apollographql.com/docs/apollo-server/api/graphql-tools.html#mergeSchemas</a> 。<br>方法 mergeSchemas 接受三个参数，需要粘合的 Schema 数组、多个 Resolver 以及类型出现冲突时的回调：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">mergeSchemas(&#123;</span><br><span class="line">  schemas: <span class="built_in">Array</span>&lt;string | GraphQLSchema | <span class="built_in">Array</span>&lt;GraphQLNamedType&gt;&gt;;</span><br><span class="line">  resolvers?: <span class="built_in">Array</span>&lt;IResolvers&gt; | IResolvers;</span><br><span class="line">  onTypeConflict?: (</span><br><span class="line">    left: GraphQLNamedType,</span><br><span class="line">    right: GraphQLNamedType,</span><br><span class="line">    info?: &#123;</span><br><span class="line">      left: &#123;</span><br><span class="line">        schema?: GraphQLSchema;</span><br><span class="line">      &#125;;</span><br><span class="line">      right: &#123;</span><br><span class="line">        schema?: GraphQLSchema;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;,</span><br><span class="line">  ) =&gt; GraphQLNamedType;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
@@ -518,7 +536,7 @@
 <li>util：工具类</li>
 <li>index.js：聚合所有schema文件</li>
 </ul>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/144971891.png" alt="graphql"></p>
 <h3 id="Schema"><a href="#Schema" class="headerlink" title="Schema"></a>Schema</h3><p>为了减小重复代码，schema可以按照模块化的方式进行划分，可抽离公共的schema，如下</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"分页信息"</span></span><br><span class="line">type PageInfo &#123;</span><br><span class="line">    <span class="string">"当前页数"</span></span><br><span class="line">    currentPageNum: Int!</span><br><span class="line">    <span class="string">"每页显示数量"</span></span><br><span class="line">    pageSize: Int!</span><br><span class="line">    <span class="string">"总页数"</span></span><br><span class="line">    totalPageCount: Int!</span><br><span class="line">    <span class="string">"总条数"</span></span><br><span class="line">    totalCount: Int!</span><br><span class="line">&#125;</span><br><span class="line">​</span><br><span class="line"><span class="string">"错误"</span></span><br><span class="line">type <span class="built_in">Error</span> &#123;</span><br><span class="line">    <span class="string">"错误码"</span></span><br><span class="line">    code: Int!</span><br><span class="line">    <span class="string">"错误信息"</span></span><br><span class="line">    msg: <span class="built_in">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在业务 schema 需要使用公共 schema的时候，通过 import 的方式进行引入</p>
@@ -536,18 +554,18 @@
 <p>​<br>3）在 makeExecutableSchema 时，添加 schemaDirectives ，如下</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> schema = makeExecutableSchema(&#123;</span><br><span class="line">      typeDefs,</span><br><span class="line">      resolvers,</span><br><span class="line">      schemaDirectives: &#123;</span><br><span class="line">          auth: AuthDirective,</span><br><span class="line">      &#125;,</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
 <h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><p>Apollo Server集成了graphiql，可以很方便的测试接口，所见即所得，而且可以随时展开右侧的API文档，即时查阅所有的接口，包括参数信息和返回数据，一目了然。</p>
-<p>图片加载失败，点击重试</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/134899495.png" alt="graphql"></p>
+<p><img src="/images/post/graphql/134914845.png" alt="graphql"></p>
 <p>在我们项目中，我们挑选了一个页面进行重构。这个页面加载的时候会重复调用某几个接口，并且只是不同的参数组合，而且需要等待这些接口都返回之后才可以正常展示</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/134897956.png" alt="graphql"></p>
 <p>而且原先返回的数据结构，基本是后端的数据模型，返回了很多前端不会用到的字段，非常冗余。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/135033258.png" alt="graphql"></p>
 <p>然后我们进行了重构，将这些RESTfull接口通过 GraphQL 进行集成，只需要通过一次请求，就完成了上述七个接口的工作</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/134950238.png" alt="graphql"></p>
 <p>并且只会返回前端需要的字段，再也没有冗余字段。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/135033459.png" alt="graphql"></p>
 <p>集成了七个 RESTfull 接口功能的单个 GraphQL 请求的耗时，只比单个 RESTfull 请求的多了几十毫秒。</p>
-<p>图片加载失败，点击重试</p>
+<p><img src="/images/post/graphql/134924789.png" alt="graphql"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>GraphQL可以将多个网络请求接口合并成一个，非常适合于单个页面需要调用多个 RESTfull 接口的场景，比如财务报表页面；</p>
 <p>GraphQL由于只提供单个对外接口，调用方如果聚合的接口越多，耗时会增加的越多，需要考虑好粒度，可以通过dataloader进行优化，但无法彻底解决性能问题；</p>
 <p>Schema的设计需要谨慎，避免节点冲突和Schema结构混乱，以及产生性能问题；</p>
