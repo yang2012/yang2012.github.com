@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="背景前后端分层协作的各种模式，协作的边界是数据，后端提供数据服务接口，前端消费数据实现人机交互。在当今强调前后端分离的架构下，前后端要交互的就只有数据。虽然我们通过 node 层承载了部分后端服务的功能，但是大多数情况下，前端依赖的数据，还是由后端同学提供的 API 接口提供。 这种协作方式在一些情况下，会遇到以下问题：  服务层 API 相对稳定，体验者 API 经常变化 跨团队低效协作 资源">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

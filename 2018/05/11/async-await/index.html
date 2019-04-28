@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="从字面上，async 是“异步”的简写，而 await 可以认为是 async wait 的简写。所以应该很好理解 async 用于申明一个 function 是异步的，而 await 用于等待一个异步方法执行完成。 另外还有一个很有意思的语法规定，await 只能出现在 async 函数中。然后细心的朋友会产生一个疑问，如果 await 只能出现在 async 函数中，那这个 async 函数应">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

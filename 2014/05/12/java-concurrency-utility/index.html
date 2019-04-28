@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="这篇博文是Java Concurrency系列博文的第二篇。在这篇博文，我们将会来共同探索Java多线程编程中常用到的机制，包括Latch、Barrier、Future和Semaphore。 PS：本文主要参考了Java Concurrentcy in Pratice一书，如有纰漏，请谅解。 java.util.concurrent.atomicAtomicBoolean">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

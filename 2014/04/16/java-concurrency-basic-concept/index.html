@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="这篇博文是Java Concurrency系列博文的第一篇，主要是来介绍多线程编程需要了解的一些基础，希望能够帮助你更好的理解多线程编程。 多线程多线程在很多应用中都有使用。比如在GUI系统中，通常会单独为UI创建一个线程，以便提供更好的人机交互，在界面上给用户及时的操作反馈，而在服务器程序中，为了提高资源的利用率和吞吐量，也会利用到多线程。 线程，有的时候，也被称为轻量级的进程。现在的操作系，很">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

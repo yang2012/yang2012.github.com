@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="通常我们只能通过抓包的方式来抓取和查看手机设备上发送的网络请求。 抓包这种方式，必须保证电脑和手机设备处于同一个网络。 比如常遇到的运营商HTTP劫持（如果只在个别运营商网络下才会出现问题，常常就是遇到了运营商HTTP劫持），这种情况下要通过抓包的方式来定位问题是非常麻烦的。 目前我们能使用的解决方法，通常是通过手机设备打开网络热点，电脑通过该热点来连接网络，再进行抓包。另外每次都要通过电脑才能查">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="背景微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。 提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。 测试过程中会遇到的问题  关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题; 不同的业务组在测试时依赖的第三方服务有改">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

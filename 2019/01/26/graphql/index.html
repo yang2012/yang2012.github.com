@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="导读本篇文章主要是为了宣导 GraphQL 技术，包含了介绍 GraphQL 能解决的问题和尚不完善的地方，以及我们团队在实际业务场景中的实践总结。希望读者能通过这篇文章，了解到 GraphQL 的优缺点，在遇到合适的场景中能多一个技术选择，并在日后的实践过程能有所参考，避免重复踩坑。 背景目前在我们绝大多数的场景中，后端提供的接口是基于 RESTful 风格的接口，而 RESTful 架构风格的">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

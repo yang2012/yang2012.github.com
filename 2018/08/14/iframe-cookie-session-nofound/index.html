@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="在 Safari 使用 iFrame 方式嵌入 Cross Domain 页面，会发生 iFrame 无法使用 Cookie，导致每次的 Request 携带的 Session id 都不一样或者登陆信息缺失。虽然通过改变 Safari 的安全性设置可以解决此问题，但是要让用户修改设置非常困难。我们可以通过 JavaScript 来巧妙地解决该问题。 本文参考 https://blog.johnw">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="这篇博文是Java Concurrency系列博文的第三篇，主要来探索Java中多线程常用到的一些集合类，包括ConcurrentHashMap和BlockingQueue。通过对部分源代码的分析，希望能够帮助理解这些集合类的机制和特点，以便把握他们的正确使用场景。 ConcurrentHashMapPS：部分内容参考了Java并发编程之ConcurrentHashMap ConcurrentHa">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">

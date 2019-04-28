@@ -93,8 +93,11 @@
 
   
 
-
-
+<script type="text/javascript">
+    var host = "justinyangis.me";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location.protocol = "https";
+</script>
 
   <meta name="description" content="现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。 但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。 因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是">
 <meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
