@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="背景微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。 提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。 测试过程中会遇到的问题  关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题; 不同的业务组在测试时依赖的第三方服务有改">
+<meta name="keywords" content="justin, yang, yijie yang, iOS, Web, front-end">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swimlane">
+<meta property="og:url" content="https://yang2012.github.io/2019/03/16/swimlane/index.html">
+<meta property="og:site_name" content="Justin Yang">
+<meta property="og:description" content="背景微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。 提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。 测试过程中会遇到的问题  关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题; 不同的业务组在测试时依赖的第三方服务有改">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://yang2012.github.io/images/post/swimlane/swimlane.png">
+<meta property="og:updated_time" content="2019-04-28T09:30:43.204Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swimlane">
+<meta name="twitter:description" content="背景微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。 提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。 测试过程中会遇到的问题  关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题; 不同的业务组在测试时依赖的第三方服务有改">
+<meta name="twitter:image" content="https://yang2012.github.io/images/post/swimlane/swimlane.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://yang2012.github.io/2019/03/16/swimlane/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Swimlane | Justin Yang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Justin Yang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">hello world</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-commonweal">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2019/03/16/swimlane/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Swimlane
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-16 14:22:29" itemprop="dateCreated datePublished" datetime="2019-03-16T14:22:29+08:00">2019-03-16</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。</p>
+<p>提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。</p>
+<p>测试过程中会遇到的问题</p>
+<ol>
+<li>关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题;</li>
+<li>不同的业务组在测试时依赖的第三方服务有改动或正在进行新需求测试影响本业务测试。</li>
+</ol>
+<p>微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。</p>
+<a id="more"></a>
+<h2 id="什么是泳道"><a href="#什么是泳道" class="headerlink" title="什么是泳道"></a>什么是泳道</h2><p>对服务链按需求进行分组复制，并实现逻辑、物理的隔离，使得不同需求的服务链运行在相隔的物理机器上，逻辑上如同游泳场中的泳道。</p>
+<p><img src="/images/post/swimlane/swimlane.png" alt="swimlane"></p>
+<p>一个环境内会有一条骨干链路(该环境的默认链路)和多条泳道。如图所示，泳道隔离出了一条调用边界：处于[泳道-1]内的服务B要调用服务C，若在[泳道-1]内部署了C服务，则B只能调用泳道内的C服务，而不能调用骨干链路或其他泳道的C服务；若在[泳道-1]内没有部署C服务，则流量会调回骨干链路。</p>
+<p>优势：</p>
+<ol>
+<li>并行测试。（因此可以根据测试需要，部署不同分支的服务分组，多个泳道并行，多个服务/多个版本可同时提测）</li>
+<li>提供稳定的骨干链路。（保证整个测试流程始终能正常运行）</li>
+<li>错误隔离。（泳道内的服务发生异常 不会影响其他泳道）</li>
+</ol>
+<h2 id="泳道的特性"><a href="#泳道的特性" class="headerlink" title="泳道的特性"></a>泳道的特性</h2><p>泳道相当于提供了多条“请求的跑道”，理解泳道主要在于理解“流量跑到哪去了”:</p>
+<p>泳道内如果没有部署被调用服务，流量会fallback到骨干<br>– 比如上图[泳道-2]中的B服务节点 调用了 [骨干链路]中的C服务节点</p>
+<p>泳道内若存在被调用节点，那么流量是一定不会fallback的 (包括不可用的和禁用的)<br>– 比如上图[泳道-2]中的A服务节点 只会调用 [泳道-2]中的B服务节点，即使[泳道-2]中的B不可用，也是不会fallback的</p>
+<p>骨干环境是一定不会调用到泳道内的<br> – 比如上图中绝逼不会有 从[骨干链路]到[泳道-2]的调用</p>
+<p>泳道之间是一定不会互相调用的<br>– 比如上图中绝逼不会有 [泳道-1]与[泳道-2]之间的调用</p>
+<h2 id="泳道的实现"><a href="#泳道的实现" class="headerlink" title="泳道的实现"></a>泳道的实现</h2><p>泳道实现的重点在于服务的注册、发现和服务导流。</p>
+<p>后端服务的注册和发现的流程如下：</p>
+<ol>
+<li>服务B启动，上报ip、port、appkey、swimlane等信息</li>
+<li>骨干链路上的服务A节点要调用B，先去取B的服务列表，并进行过滤：A不带有泳道标识，所以只会调用不带泳道标识的B服务节点</li>
+<li>泳道1上的服务A节点要调用B，也会先去取B的服务列表，并进行过滤：A带有泳道=泳道1 标识，所以只会调用同样带有泳道=泳道1 标识的B服务节点</li>
+</ol>
+<p>服务导流</p>
+<ul>
+<li>通过域名划分泳道：为各个泳道申请单独的域名，根据域名进行分流</li>
+<li>通过header携带泳道信息：请求的header字段增加“swimlane=xxxx”，标识请求要打到名为xxxx的泳道里，分流系统会根据该字段做分流。</li>
+</ul>
+<p>前端静态资源，基于泳道名进行隔离，在资源编译和打包的时候，指定发布的泳道名，然后资源会上传到该泳道对应的静态服务器中：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> swimName = process.env.SWIM_ENV;</span><br><span class="line"><span class="keyword">if</span> (swimName) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'检测到泳道环境SWIM_ENV:'</span> + swimName);</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'默认使用test01执行发布'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> webpackConfig = merge(baseWebpackConfig, &#123;</span><br><span class="line">    devtool: config.build.productionSourceMap ? <span class="string">'#source-map'</span> : <span class="literal">false</span>,</span><br><span class="line">    output: &#123;</span><br><span class="line">        path: swimName ? config.build.assetsRoot + <span class="string">`/<span class="subst">$&#123;swimName&#125;</span>`</span> : config.build.assetsRoot,</span><br><span class="line">        publicPath: swimName ? config.build.assetsPublicPath + <span class="string">`/<span class="subst">$&#123;swimName&#125;</span>/`</span> : config.build.assetsPublicPath,</span><br><span class="line">        filename: <span class="string">'js/[name].bundle.[chunkhash].js'</span>,</span><br><span class="line">        chunkFilename: <span class="string">'js/[name].[chunkhash:5].chunk.js'</span>,</span><br><span class="line">        library: <span class="string">'[name]'</span></span><br><span class="line">    &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/26/bff/" rel="next" title="Backend for frontend">
+                <i class="fa fa-chevron-left"></i> Backend for frontend
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
+            
+              <p class="site-author-name" itemprop="name">Justin Yang</p>
+              <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/yang2012" title="GitHub &rarr; https://github.com/yang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:justin.yang2012@gmail.com" title="E-Mail &rarr; mailto:justin.yang2012@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/justinyang09" title="Twitter &rarr; https://twitter.com/justinyang09" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://www.facebook.com/justinyang2012" title="FB Page &rarr; https://www.facebook.com/justinyang2012" rel="noopener" target="_blank"><i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是泳道"><span class="nav-number">2.</span> <span class="nav-text">什么是泳道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泳道的特性"><span class="nav-number">3.</span> <span class="nav-text">泳道的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#泳道的实现"><span class="nav-number">4.</span> <span class="nav-text">泳道的实现</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2013 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Justin Yang</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -328,7 +328,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2019/04/23/graphql/">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2019/03/16/swimlane/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Justin Yang">
@@ -348,7 +348,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2019/04/23/graphql/" class="post-title-link" itemprop="url">GraphQL - 一种用于 API 的查询语言</a>
+                <a href="/2019/03/16/swimlane/" class="post-title-link" itemprop="url">Swimlane</a>
               
             
           </h1>
@@ -373,7 +373,7 @@
                 
               
 
-              <time title="创建时间：2019-04-23 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-23T00:00:00+08:00">2019-04-23</time>
+              <time title="创建时间：2019-03-16 14:22:29" itemprop="dateCreated datePublished" datetime="2019-03-16T14:22:29+08:00">2019-03-16</time>
             
 
             
@@ -427,12 +427,18 @@
 
       
         
-          <h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><p>本篇文章主要是为了宣导 GraphQL 技术，包含了介绍 GraphQL 能解决的问题和尚不完善的地方，以及我们团队在实际业务场景中的实践总结。希望读者能通过这篇文章，了解到 GraphQL 的优缺点，在遇到合适的场景中能多一个技术选择，并在日后的实践过程能有所参考，避免重复踩坑。</p>
-<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>目前在我们绝大多数的场景中，后端提供的接口是基于 RESTful 风格的接口，而 RESTful 架构风格的服务是围绕资源展开的。随着业务复杂度的提高，前端页面信息和交互体验的愈加复杂，RESTfull风格的接口，在实际研发场景下，通常会遇到以下几处痛点：</p>
+          <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。</p>
+<p>提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。</p>
+<p>测试过程中会遇到的问题</p>
+<ol>
+<li>关于一个服务上的多个需求的同时测试，存在服务抢占分支测试的问题;</li>
+<li>不同的业务组在测试时依赖的第三方服务有改动或正在进行新需求测试影响本业务测试。</li>
+</ol>
+<p>微服务框架下服务个数多、调用链路较长，其中一个服务出问题会影响到整条链路。但QA提测往往需要该条链路上的多个服务配套测试，甚至是同时测试一个服务的多个演进版本。提供稳定环境 和 多服务/多版本同时测试 看似相悖的需求，通过泳道“Swimlane”能够得到解决。</p>
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2019/04/23/graphql/#more" rel="contents">
+              <a class="btn" href="/2019/03/16/swimlane/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -492,7 +498,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/11/24/npm/">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2019/01/26/bff/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Justin Yang">
@@ -512,7 +518,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/11/24/npm/" class="post-title-link" itemprop="url">npm包实践规范</a>
+                <a href="/2019/01/26/bff/" class="post-title-link" itemprop="url">Backend for frontend</a>
               
             
           </h1>
@@ -537,7 +543,341 @@
                 
               
 
-              <time title="创建时间：2018-11-24 11:08:03" itemprop="dateCreated datePublished" datetime="2018-11-24T11:08:03+08:00">2018-11-24</time>
+              <time title="创建时间：2019-01-26 11:06:23" itemprop="dateCreated datePublished" datetime="2019-01-26T11:06:23+08:00">2019-01-26</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p><img src="/images/post/bff/bff-overview.jpg" alt="Backend For Frontend"></p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>前后端分层协作的各种模式，协作的边界是数据，后端提供数据服务接口，前端消费数据实现人机交互。<br>在当今强调前后端分离的架构下，前后端要交互的就只有数据。虽然我们通过 node 层承载了部分后端服务的功能，但是大多数情况下，前端依赖的数据，还是由后端同学提供的 API 接口提供。</p>
+<p>这种协作方式在一些情况下，会遇到以下问题：</p>
+<ul>
+<li>服务层 API 相对稳定，体验者 API 经常变化</li>
+<li>跨团队低效协作</li>
+<li>资源协调困难</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/01/26/bff/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/12/23/graphql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/12/23/graphql/" class="post-title-link" itemprop="url">GraphQL - 一种用于 API 的查询语言</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-12-23 00:00:00" itemprop="dateCreated datePublished" datetime="2018-12-23T00:00:00+08:00">2018-12-23</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><p>本篇文章主要是为了宣导 GraphQL 技术，包含了介绍 GraphQL 能解决的问题和尚不完善的地方，以及我们团队在实际业务场景中的实践总结。希望读者能通过这篇文章，了解到 GraphQL 的优缺点，在遇到合适的场景中能多一个技术选择，并在日后的实践过程能有所参考，避免重复踩坑。</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>目前在我们绝大多数的场景中，后端提供的接口是基于 RESTful 风格的接口，而 RESTful 架构风格的服务是围绕资源展开的。随着业务复杂度的提高，前端页面信息和交互体验的愈加复杂，RESTfull风格的接口，在实际研发场景下，通常会遇到以下几处痛点：</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/12/23/graphql/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/10/04/npm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/10/04/npm/" class="post-title-link" itemprop="url">npm包实践规范</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-04 11:08:03" itemprop="dateCreated datePublished" datetime="2018-10-04T11:08:03+08:00">2018-10-04</time>
             
 
             
@@ -597,7 +937,7 @@
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2018/11/24/npm/#more" rel="contents">
+              <a class="btn" href="/2018/10/04/npm/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -657,7 +997,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/07/24/iframe-cookie-session-nofound/">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/08/14/iframe-cookie-session-nofound/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Justin Yang">
@@ -677,7 +1017,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/07/24/iframe-cookie-session-nofound/" class="post-title-link" itemprop="url">iframe中无法访问 Cookie & Session 問題</a>
+                <a href="/2018/08/14/iframe-cookie-session-nofound/" class="post-title-link" itemprop="url">iframe中无法访问 Cookie & Session 問題</a>
               
             
           </h1>
@@ -702,7 +1042,7 @@
                 
               
 
-              <time title="创建时间：2018-07-24 12:04:32" itemprop="dateCreated datePublished" datetime="2018-07-24T12:04:32+08:00">2018-07-24</time>
+              <time title="创建时间：2018-08-14 12:04:32" itemprop="dateCreated datePublished" datetime="2018-08-14T12:04:32+08:00">2018-08-14</time>
             
 
             
@@ -756,22 +1096,18 @@
 
       
         
-          
-            <p>在 Safari 使用 IFrame 方式嵌入 Cross Domain 頁面，會發生 IFrame 無法使用 Cookie，導致每次的 Request 帶的 Session id 都不一樣。<br>改變 Safari 的安全性設定可以解掉此問題。但要請用戶改設定簡直天方夜譚。可以透過 JavaScript 變相解決此問題。</p>
+          <p>在 Safari 使用 iFrame 方式嵌入 Cross Domain 页面，会发生 iFrame 无法使用 Cookie，导致每次的 Request 携带的 Session id 都不一样或者登陆信息缺失。<br>虽然通过改变 Safari 的安全性设置可以解决此问题，但是要让用户修改设置非常困难。我们可以通过 JavaScript 来巧妙地解决该问题。</p>
 <p>本文参考 <a href="https://blog.johnwu.cc/article/cookie-session-not-working-in-iframe.html" target="_blank" rel="noopener">https://blog.johnwu.cc/article/cookie-session-not-working-in-iframe.html</a> </p>
-<p>情境<br>由於公司部分產品是以 IFrame 方式嵌入在別人家的頁面裡，在使用 Safari 開啟的情況下，會發生無法使用 Cookie，導致每次的 Request 帶的 Session id 都不一樣。在 Response Header 加入解決 Cross Domain 的 P3P : “CP=CAO PSA OUR” 也沒用。</p>
-<p>實際原因是 Safari 的安全性問題。如果 IFrame 的 Domain 沒有被 Safari 直接存取過，Safari 就不會認可你的 Domain 存取 Cookie。簡單的說就是你只要直接在網址列輸入你的 Domain，Safari 就會認同你的 domain 存取 Cookie。</p>
-<p>改變 Safari 的安全性設定，也可以解掉此問題。但我們的用戶散落在全世界，請他們改設定簡直天方夜譚。</p>
-<p>我用一個偷吃步的方法，只需要修改 JavaScript 就能式解掉此問題。</p>
-<p>如上圖 iframe.com 無法存取 Cookie，導致 Session 也跟著無法使用。由於 parent.com 不是我們能控制跟存取的頁面，所以解決方式只會從 IFrame.com 著手。</p>
-<p>解法<br>透過轉址方式將 Parent 轉換成 iframe.com，讓 Safari 認可 iframe.com 存取 Cookie 後，再將網址轉回 parent.com。</p>
-<p>判斷瀏覽器<br>當 iframe.con/index 被打開後，先判斷瀏覽器，如果是 Safari，我們就將 window.top 轉向 iframe.com/redirect</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* iframe.con/index */</span>  </span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> userAgent = navigator.userAgent.toLowerCase();</span><br><span class="line"><span class="keyword">var</span> isSafari = userAgent.indexOf(<span class="string">"safari"</span>) != <span class="number">-1</span> &amp;&amp; userAgent.indexOf(<span class="string">"chrome"</span>) == <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">var</span> hasCookiePermission = <span class="built_in">document</span>.cookie.indexOf(<span class="string">"hasCookiePermission=true"</span>) != <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (isSafari &amp;&amp; !hasCookiePermission) &#123;</span><br><span class="line">    <span class="built_in">window</span>.top.location = <span class="string">"http://iframe.com/redirect?ref="</span> + <span class="built_in">document</span>.referrer;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Chrome 的 User Agent 會同時出現 Safari 及 Chrome 字串，所以要確保真的是 Safari，User Agent 要排除 Chrome 字串。<br>為了避免無止盡重導頁面，當取得 Cookie 存取權限後，就要停止重導頁面。<br>重新轉向到原網址<br>當 Safari 打開 iframe.com/redirect 時，意味著 iframe.com 已經被認可存取 Cookie 了。所以此時我們只要轉向回原來的頁面即可。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* iframe.com/redirect */</span>  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getParameterByName</span>(<span class="params">name, url</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!url) &#123;</span><br><span class="line">      url = <span class="built_in">window</span>.location.href;</span><br><span class="line">    &#125;</span><br><span class="line">    name = name.replace(<span class="regexp">/[\[\]]/g</span>, <span class="string">"\\$&amp;"</span>);</span><br><span class="line">    <span class="keyword">var</span> regex = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"[?&amp;]"</span> + name + <span class="string">"(=([^&amp;#]*)|&amp;|#|$)"</span>),</span><br><span class="line">        results = regex.exec(url);</span><br><span class="line">    <span class="keyword">if</span> (!results) <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (!results[<span class="number">2</span>]) <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">decodeURIComponent</span>(results[<span class="number">2</span>].replace(<span class="regexp">/\+/g</span>, <span class="string">" "</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> ref = getParameterByName(<span class="string">"ref"</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.cookie = <span class="string">"hasCookiePermission=true"</span>;</span><br><span class="line"><span class="built_in">window</span>.location = ref;</span><br></pre></td></tr></table></figure>
-<p>完成<br>再度回到 parent.com/home 時，iframe.com 就能正常使用 Cookie 跟 Session 了。</p>
-
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>我们接入第三方页面的时候，通常是通过 iFrame 方式进行嵌入。有些用户在 Safari 浏览器访问的时候，偶尔会发生 Cookie 缺失，导致用户信息缺失的情况。这种情况的根本原因在于 Safari 的安全性设置。如果 iFrame 的 Domain 没有被 Safari 直接存取过，Safari 就不会认可你的 Domain ，不允许存取Cookie。简而言之，就是只要你曾经在网址输入框输过该 Domain，Safari 就会认同你的 domain ，允许存取 Cookie。</p>
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/08/14/iframe-cookie-session-nofound/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -826,7 +1162,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/02/10/octopress-to-hexo/">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/07/12/express-middleware/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Justin Yang">
@@ -846,7 +1182,7 @@
           <h1 class="post-title" itemprop="name headline">
                 
                 
-                <a href="/2018/02/10/octopress-to-hexo/" class="post-title-link" itemprop="url">Octopress to Hexo</a>
+                <a href="/2018/07/12/express-middleware/" class="post-title-link" itemprop="url">Express中间件模式</a>
               
             
           </h1>
@@ -871,7 +1207,350 @@
                 
               
 
-              <time title="创建时间：2018-02-10 00:00:00" itemprop="dateCreated datePublished" datetime="2018-02-10T00:00:00+08:00">2018-02-10</time>
+              <time title="创建时间：2018-07-12 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-12T00:00:00+08:00">2018-07-12</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p>中间件的本质就是一个函数，在收到请求和返回相应的过程中做一些我们想做的事情。</p>
+<p>Express对中间件的作用的描述如下：</p>
+<ul>
+<li>执行任何代码</li>
+<li>修改请求和响应对象</li>
+<li>终结请求-响应循环</li>
+<li>调用堆栈中的下一个中间件</li>
+</ul>
+<p>中间件可分为以下五类（原理相同，只是用法不同）：</p>
+<ul>
+<li>应用级中间件</li>
+<li>路由级中间件</li>
+<li>错误处理中间件</li>
+<li>内置中间件</li>
+<li>第三方中间件</li>
+</ul>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/07/12/express-middleware/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/05/11/async-await/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/05/11/async-await/" class="post-title-link" itemprop="url">async and await</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-05-11 00:00:00" itemprop="dateCreated datePublished" datetime="2018-05-11T00:00:00+08:00">2018-05-11</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>从字面上，async 是“异步”的简写，而 await 可以认为是 async wait 的简写。所以应该很好理解 async 用于申明一个 function 是异步的，而 await 用于等待一个异步方法执行完成。</p>
+<p>另外还有一个很有意思的语法规定，await 只能出现在 async 函数中。然后细心的朋友会产生一个疑问，如果 await 只能出现在 async 函数中，那这个 async 函数应该怎么调用？</p>
+<p>如果需要通过 await 来调用一个 async 函数，那这个调用的外面必须得再包一个 async 函数，然后就进入了死循环。究竟底层是怎么实现的呢？</p>
+          <!--noindex-->
+          
+            <div class="post-button text-center">
+              <a class="btn" href="/2018/05/11/async-await/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2018/03/10/octopress-to-hexo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Justin Yang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2018/03/10/octopress-to-hexo/" class="post-title-link" itemprop="url">Octopress to Hexo</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-03-10 00:00:00" itemprop="dateCreated datePublished" datetime="2018-03-10T00:00:00+08:00">2018-03-10</time>
             
 
             
@@ -935,7 +1614,7 @@
           <!--noindex-->
           
             <div class="post-button text-center">
-              <a class="btn" href="/2018/02/10/octopress-to-hexo/#more" rel="contents">
+              <a class="btn" href="/2018/03/10/octopress-to-hexo/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1400,663 +2079,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2017/05/19/vertical-horizatal-center/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang">
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
-      <meta itemprop="image" content="/images/default_avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/05/19/vertical-horizatal-center/" class="post-title-link" itemprop="url">【CSS trick】垂直居中</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-05-19 00:00:00" itemprop="dateCreated datePublished" datetime="2017-05-19T00:00:00+08:00">2017-05-19</time>
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>我们都知道，通过<code>margin: 0 auto;</code>，可以很简单的就实现了水平居中，但是我们却不能通过<code>margin: auto;</code>来实现垂直居中。要在各种环境下实现完美居中，还是一件挺烦人的事情，特别对于新人来说。虽然通过google我们可以很方便的找到一种实现方式，但是如果只会使用而不了解其实现原理的话，是非常不利于我们学习的。下面我们就来一一探索常见的6种实现方式的奥秘。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2017/05/19/vertical-horizatal-center/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2017/04/20/https/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang">
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
-      <meta itemprop="image" content="/images/default_avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/04/20/https/" class="post-title-link" itemprop="url">探讨HPPTS</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-04-20 00:00:00" itemprop="dateCreated datePublished" datetime="2017-04-20T00:00:00+08:00">2017-04-20</time>
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>HTTPS，全称Hyper Text Transfer Protocol over Secure Socket Layer，是以安全为目标的HTTP通道。通俗来讲，HTTPS就是HTTP的安全版，即HTTP下加入SSL层。HTTPS的安全基础是SSL，因此加密的详细内容就依赖于SSL。后面我们会来详细了解HTTPS的通信过程和可能受到的攻击手段。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2017/04/20/https/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2017/01/22/set-up-ssl-on-github-pages-with-custom-domains/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang">
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
-      <meta itemprop="image" content="/images/default_avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2017/01/22/set-up-ssl-on-github-pages-with-custom-domains/" class="post-title-link" itemprop="url">Set Up SSL on Github Pages With Custom Domains</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2017-01-22 00:00:00" itemprop="dateCreated datePublished" datetime="2017-01-22T00:00:00+08:00">2017-01-22</time>
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>由于之前苹果公司限制所以应用必须在17年1月1号前开启ATS（后面推迟了deadline，可能是太多应用都还没有开启吧:sweat:），所以最近一直都在研究HTTPS协议。趁这个机会，在这段时间内我也将自己的博客迁移到HTTPS。因此做个分享，希望能够帮助到后面需要迁移的同学。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2017/01/22/set-up-ssl-on-github-pages-with-custom-domains/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://yang2012.github.io/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang">
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
-      <meta itemprop="image" content="/images/default_avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/" class="post-title-link" itemprop="url">webpack-前端界中的打包利器</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2016-12-25 00:00:00" itemprop="dateCreated datePublished" datetime="2016-12-25T00:00:00+08:00">2016-12-25</time>
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><img src="/images/post/webpack/webpack-icon.png" alt="Hello webpack"></p>
-<p>现在，前端的页面和功能越来越复杂，为了复用或者减少复杂度，开发人员经常将页面拆分成多个部分，也就是模块，每个模块负责相对独立的功能，通过组合不同的模块来实现业务需求。</p>
-<p>但是这种方式会带来另外一个问题，就是浏览器并行加载的数量有限，如果这些模块都是单独的一个js或者css文件，就会影响到整个页面的加载效率。</p>
-<p>因此如果能够将多个相互依赖相互关联的文件合并成一个文件，就可以无痛解决这个问题，而这也就是webpack的功能。</p>
-<p><img src="/images/post/webpack/webpack-brief.png" alt="What can webpack do"></p>
-<p>webpack是一种<strong>模块化</strong>的解决方案。所有的文件，对于webpack来说，通过组合合适的loader，都可以当做模块来处理，包括JavaScript代码，CSS和fonts，以及多媒体资源等。</p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/2016/12/25/webpackman-tan-qian-duan-jie-zhong-de-cocoapods/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2105,7 +2127,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
