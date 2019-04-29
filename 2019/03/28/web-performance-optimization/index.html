@@ -108,7 +108,7 @@
 <meta property="og:description" content="性能指标在 User-centric Performance Metrics 一文中，共提到了 4 个页面渲染的关键指标。    指标 用户体验 描述     FP 它在发生吗？ 网页浏览顺利开始了吗？服务端有响应吗？   FCP 它是否有用？ 用户是否能看到足够的内容？   FMP 它是否可用？ 用户是否可以和页面交互，还是页面仍在忙于加载？   TTI 它是否令人愉快的？ 交互是否流程和自然，">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://www.justinyangis.me/images/post/web-performance-optimization/timing.png">
-<meta property="og:updated_time" content="2019-04-29T12:15:44.622Z">
+<meta property="og:updated_time" content="2019-04-29T12:18:20.028Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="web performance optimization">
 <meta name="twitter:description" content="性能指标在 User-centric Performance Metrics 一文中，共提到了 4 个页面渲染的关键指标。    指标 用户体验 描述     FP 它在发生吗？ 网页浏览顺利开始了吗？服务端有响应吗？   FCP 它是否有用？ 用户是否能看到足够的内容？   FMP 它是否可用？ 用户是否可以和页面交互，还是页面仍在忙于加载？   TTI 它是否令人愉快的？ 交互是否流程和自然，">
@@ -475,6 +475,7 @@
 <li>Requests（HTTP请求数）：整个页面的请求数</li>
 <li>Bytes in（传输的字节量）：加载页面下载的数据量，一般指页面大小</li>
 </ol>
+<a id="more"></a>
 <h2 id="性能测量"><a href="#性能测量" class="headerlink" title="性能测量"></a>性能测量</h2><h3 id="本地开发"><a href="#本地开发" class="headerlink" title="本地开发"></a>本地开发</h3><p><a href="https://developers.google.com/web/tools/lighthouse/?spm=a2c4e.11153940.blogcont598162.19.f3415522itWnFb" target="_blank" rel="noopener">Lighthouse</a> 和 <a href="https://www.webpagetest.org/?spm=a2c4e.11153940.blogcont598162.20.f3415522itWnFb" target="_blank" rel="noopener">Web Page Test</a> 为我们本地开发提供了非常好的性能测试工具，而且对于我们前面提到的各项测量标准都有较好的支持。</p>
 <h3 id="用户设备"><a href="#用户设备" class="headerlink" title="用户设备"></a>用户设备</h3><p>在用户设备上，我们可以通过性能 API （<a href="https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver?spm=a2c4e.11153940.blogcont598162.21.f3415522itWnFb" target="_blank" rel="noopener">PerformanceObserver</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEntry?spm=a2c4e.11153940.blogcont598162.22.f3415522itWnFb" target="_blank" rel="noopener">PerformanceEntry</a>, 以及 <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp?spm=a2c4e.11153940.blogcont598162.23.f3415522itWnFb" target="_blank" rel="noopener">DOMHighResTimeStamp</a>），进行测量。</p>
 <p>1.测量 FP/FCP</p>

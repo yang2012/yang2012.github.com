@@ -15,7 +15,7 @@
 
 
 <html class="theme-next mist use-motion" lang="zh-CN">
-<head>
+<head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
@@ -117,7 +117,7 @@
 
   
   
-  <link rel="canonical" href="https://www.justinyangis.me/"/>
+  <link rel="canonical" href="https://www.justinyangis.me/">
 
 
 
@@ -228,7 +228,7 @@
 
     
 
-    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
 
   </li>
         
@@ -245,7 +245,7 @@
 
     
 
-    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br/>分类</a>
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
 
   </li>
         
@@ -262,7 +262,7 @@
 
     
 
-    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
 
   </li>
         
@@ -279,7 +279,7 @@
 
     
 
-    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br/>公益 404</a>
+    <a href="/404/" rel="section"><i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br>公益 404</a>
 
   </li>
 
@@ -331,16 +331,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/03/28/web-performance-optimization/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/03/28/web-performance-optimization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -430,8 +430,7 @@
 
       
         
-          
-            <h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><p>在 <a href="https://developers.google.com/web/fundamentals/performance/user-centric-performance-metrics" target="_blank" rel="noopener">User-centric Performance Metrics</a> 一文中，共提到了 4 个页面渲染的关键指标。</p>
+          <h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><p>在 <a href="https://developers.google.com/web/fundamentals/performance/user-centric-performance-metrics" target="_blank" rel="noopener">User-centric Performance Metrics</a> 一文中，共提到了 4 个页面渲染的关键指标。</p>
 <table>
 <thead>
 <tr>
@@ -477,60 +476,15 @@
 <li>Requests（HTTP请求数）：整个页面的请求数</li>
 <li>Bytes in（传输的字节量）：加载页面下载的数据量，一般指页面大小</li>
 </ol>
-<h2 id="性能测量"><a href="#性能测量" class="headerlink" title="性能测量"></a>性能测量</h2><h3 id="本地开发"><a href="#本地开发" class="headerlink" title="本地开发"></a>本地开发</h3><p><a href="https://developers.google.com/web/tools/lighthouse/?spm=a2c4e.11153940.blogcont598162.19.f3415522itWnFb" target="_blank" rel="noopener">Lighthouse</a> 和 <a href="https://www.webpagetest.org/?spm=a2c4e.11153940.blogcont598162.20.f3415522itWnFb" target="_blank" rel="noopener">Web Page Test</a> 为我们本地开发提供了非常好的性能测试工具，而且对于我们前面提到的各项测量标准都有较好的支持。</p>
-<h3 id="用户设备"><a href="#用户设备" class="headerlink" title="用户设备"></a>用户设备</h3><p>在用户设备上，我们可以通过性能 API （<a href="https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver?spm=a2c4e.11153940.blogcont598162.21.f3415522itWnFb" target="_blank" rel="noopener">PerformanceObserver</a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/PerformanceEntry?spm=a2c4e.11153940.blogcont598162.22.f3415522itWnFb" target="_blank" rel="noopener">PerformanceEntry</a>, 以及 <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp?spm=a2c4e.11153940.blogcont598162.23.f3415522itWnFb" target="_blank" rel="noopener">DOMHighResTimeStamp</a>），进行测量。</p>
-<p>1.测量 FP/FCP</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 性能度量结果对象数组</span></span><br><span class="line"><span class="keyword">const</span> metrics = [];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="string">'PerformanceLongTaskTiming'</span> <span class="keyword">in</span> <span class="built_in">window</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> observer = <span class="keyword">new</span> PerformanceObserver(<span class="function"><span class="params">list</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> entry <span class="keyword">of</span> list.getEntries()) &#123;</span><br><span class="line">      <span class="keyword">const</span> metricName = entry.name;</span><br><span class="line">      <span class="keyword">const</span> time = <span class="built_in">Math</span>.round(entry.startTime + entry.duration);</span><br><span class="line">      metrics.push(&#123;</span><br><span class="line">        eventCategory: <span class="string">'Performance Metrics'</span>,</span><br><span class="line">        eventAction: metricName,</span><br><span class="line">        eventValue: time,</span><br><span class="line">        nonInteraction: <span class="literal">true</span></span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  observer.observe(&#123; <span class="attr">entryTypes</span>: [<span class="string">'paint'</span>] &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.测量 FMP<br>由于页面主视觉元素没有固定规范，需要开发者自行约定，因此无法直接通过调用某个接口来获取 FMP，我们可以通过 performance.mark 来标记关键节点的方式来大致计算 FMP 时间。</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/sheet1.css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> <span class="attr">href</span>=<span class="string">"/sheet4.css"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">performance.mark(<span class="string">"stylesheets done blocking"</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"hero.jpg"</span> <span class="attr">onload</span>=<span class="string">"performance.clearMarks('img displayed'); performance.mark('img displayed');"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">performance.clearMarks(<span class="string">"img displayed"</span>);</span></span><br><span class="line"><span class="javascript">performance.mark(<span class="string">"img displayed"</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>This is the call to action text element.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">performance.mark(<span class="string">"text displayed"</span>);</span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">measurePerf</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> perfEntries = performance.getEntriesByType(<span class="string">"mark"</span>);</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; perfEntries.length; i++) &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"Name: "</span> + perfEntries[i].name +</span><br><span class="line">      <span class="string">" Entry Type: "</span> + perfEntries[i].entryType +</span><br><span class="line">      <span class="string">" Start Time: "</span> + perfEntries[i].startTime +</span><br><span class="line">      <span class="string">" Duration: "</span>   + perfEntries[i].duration  + <span class="string">"\n"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>3.测量 TTI<br>可以采用谷歌提供的 tti-polyfill。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ttiPolyfill <span class="keyword">from</span> <span class="string">'./path/to/tti-polyfill.js'</span>;</span><br><span class="line"></span><br><span class="line">ttiPolyfill.getFirstConsistentlyInteractive().then(<span class="function">(<span class="params">tti</span>) =&gt;</span> &#123;</span><br><span class="line">  ga(<span class="string">'send'</span>, <span class="string">'event'</span>, &#123;</span><br><span class="line">    eventCategory: <span class="string">'Performance Metrics'</span>,</span><br><span class="line">    eventAction: <span class="string">'TTI'</span>,</span><br><span class="line">    eventValue: tti,</span><br><span class="line">    nonInteraction: <span class="literal">true</span>,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>4.测量 Long Tasks<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">onst observer = <span class="keyword">new</span> PerformanceObserver(<span class="function">(<span class="params">list</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> entry <span class="keyword">of</span> list.getEntries()) &#123;</span><br><span class="line">    ga(<span class="string">'send'</span>, <span class="string">'event'</span>, &#123;</span><br><span class="line">      eventCategory: <span class="string">'Performance Metrics'</span>,</span><br><span class="line">      eventAction: <span class="string">'longtask'</span>,</span><br><span class="line">      eventValue: <span class="built_in">Math</span>.round(entry.startTime + entry.duration),</span><br><span class="line">      eventLabel: <span class="built_in">JSON</span>.stringify(entry.attribution),</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">observer.observe(&#123;<span class="attr">entryTypes</span>: [<span class="string">'longtask'</span>]&#125;);</span><br></pre></td></tr></table></figure></p>
-<h2 id="秒开"><a href="#秒开" class="headerlink" title="秒开"></a>秒开</h2><p>在我们的业务中，我们希望 Web 页面能够像小程序一样，能够给人秒开的体验，因此我们会更关注秒开率。</p>
-<p>秒开标准：1s之内完成首屏页面框架和主要元素的布局，主要元素个数/位置/大小处于稳定状态；同步加载的图片可见，异步加载的图片不保证可见。主要元素指除浮层、弹窗、骨架屏/骨架模块之外的元素，不关心是否进入可交互状态。</p>
-<p>秒开的计算方式为从触发导航到页面首次有效绘制 (FMP) 的时长。</p>
-<p><img src="/images/post/web-performance-optimization/timing.png" alt="timing"></p>
-<p>根据 performance API，我们可以使用 performance.timing.navigationStart 来代表页面加载开始时间，因此秒开计算方式：FMP - performance.timing.navigationStart &lt; 1s</p>
-<p>FMP 时间在不同页面实现中计算方式会有差别：</p>
-<ol>
-<li>符合首屏内容直出、不经二次请求获取首屏数据的页面。近似等同 FCP 时间，具体实现要调整精度。</li>
-<li>完全前后端分离，首屏内容需经由二次请求获取的页面。首屏DOM最后一次变化的时间。</li>
-</ol>
-<p>为了达到秒开，关键在于如何优化 FMP 。</p>
-<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>最简单的优化性能的方式是减少需要传输给客户端的 js 代码和简化页面的 HTML 结构。但是如果我们已经无法缩小 js 代码体积，那就需要思考如何传输我们的 js 代码。</p>
-<p>优化 FP/FCP</p>
-<ul>
-<li>在 <head><meta name="generator" content="Hexo 3.8.0"> 移除影响 FP/FCP 的 CSS 和 JS 代码</head></li>
-<li>将影响首屏渲染的关键 CSS 代码直接通过 inline 的方式写入 <head><meta name="generator" content="Hexo 3.8.0"> 中；</head></li>
-<li>对 React/Vue/Angular 这种客户端渲染框架，做 SSR 或者 CSR；</li>
-<li>本地缓存</li>
-<li>预加载</li>
-</ul>
-<p>优化 FMP/TTI</p>
-<ul>
-<li>首先需要确定页面中的最关键元素，例如专题中的视频组件，然后需要保证关键组件相关的代码最先加载并且使得关键组件在第一时间被渲染且可交互；</li>
-<li>图片懒加载，组件懒加载；</li>
-<li>其他一些对渲染关键组件无用的代码可以延缓加载</li>
-<li>减少 html dom 个数和层数</li>
-<li>尽量缩减 FMP 和 TTI 的时间间隔，最好让用户知道当前页面并未完全可交互。如果用户想要交互但是页面没有响应，那么用户会感到不爽</li>
-</ul>
-<p>防止 long tasks</p>
-<ul>
-<li>将代码分割，在需要调用的时候才进行加载。不仅能加快页面交互时间，而且可以减少 long tasks</li>
-<li>对于执行时间特别长的代码，可以尝试让他们分为几个异步执行的代码块</li>
-</ul>
-<p>Webpack提供一种动态组件的功能，如果项目是通过Webpack进行打包，可以直接通过以下方式进行代码拆分：</p>
-<p>1.动态注册 Component<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Vue.component(<span class="string">'dynamic-component'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">resolve</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 通过 `require` 语法引进的文件</span></span><br><span class="line">  <span class="comment">// webpack会自动将其封装到单独的文件</span></span><br><span class="line">  <span class="comment">// 然后通过 JSONP 的方式，动态添加到文档中</span></span><br><span class="line">  <span class="built_in">require</span>([<span class="string">'./dynamic-component'</span>], resolve)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line">components: &#123;</span><br><span class="line">  <span class="string">'dynamic-component'</span>: <span class="function"><span class="params">()</span> =&gt;</span> <span class="keyword">import</span>(<span class="string">'./dynamic-component'</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>2.动态注册 Store<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">created() &#123;</span><br><span class="line">    <span class="keyword">this</span>.$store.registerModule(<span class="string">'dynamicStore'</span>, DynamicStore, &#123; <span class="attr">preserveState</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure></p>
-<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ol>
-<li><a href="https://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&amp;mid=2247489935&amp;idx=1&amp;sn=f59537133b8548caf5a513ee95ecc1be&amp;chksm=f951acccce2625da71bacdb5cd814bcdc8900c293c56662bbad6e39af40ebd451837d3866404&amp;token=652753404&amp;lang=zh_CN#rd" target="_blank" rel="noopener">前端黑科技：美团网页首帧优化实践</a></li>
-<li><a href="https://yq.aliyun.com/articles/598162" target="_blank" rel="noopener">前端性能量化标准</a></li>
-</ol>
-
+          <!--noindex-->
           
+            <div class="post-button text-center">
+              <a class="btn" href="/2019/03/28/web-performance-optimization/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          
+          <!--/noindex-->
         
       
     </div>
@@ -585,16 +539,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/02/16/swimlane/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/02/16/swimlane/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -755,16 +709,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/01/26/graphql/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2019/01/26/graphql/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -919,16 +873,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/12/23/bff/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/12/23/bff/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1089,16 +1043,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/10/04/npm/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/10/04/npm/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1254,16 +1208,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/08/14/iframe-cookie-session-nofound/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/08/14/iframe-cookie-session-nofound/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1419,16 +1373,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/07/12/express-middleware/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/07/12/express-middleware/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1597,16 +1551,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/05/11/async-await/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/05/11/async-await/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1762,16 +1716,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/03/10/octopress-to-hexo/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/03/10/octopress-to-hexo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -1931,16 +1885,16 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/01/24/interview/"/>
+    <link itemprop="mainEntityOfPage" href="https://www.justinyangis.me/2018/01/24/interview/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Justin Yang"/>
-      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine."/>
-      <meta itemprop="image" content="/images/default_avatar.png"/>
+      <meta itemprop="name" content="Justin Yang">
+      <meta itemprop="description" content="Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.">
+      <meta itemprop="image" content="/images/default_avatar.png">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Justin Yang"/>
+      <meta itemprop="name" content="Justin Yang">
     </span>
 
     
@@ -2125,9 +2079,7 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
-              <img class="site-author-image" itemprop="image"
-                src="/images/default_avatar.png"
-                alt="Justin Yang"/>
+              <img class="site-author-image" itemprop="image" src="/images/default_avatar.png" alt="Justin Yang">
             
               <p class="site-author-name" itemprop="name">Justin Yang</p>
               <div class="site-description motion-element" itemprop="description">Blog and website of Justin Yang, blogging mainly for tech. Opinions expressed are mine.</div>
